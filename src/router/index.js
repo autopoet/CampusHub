@@ -46,17 +46,17 @@ const router = createRouter({
           ]
         },
         {
-          path: '/waiting', // 等你来答页
+          path: 'waiting', // 等你来答页 - 使用相对路径
           name: 'waiting',
           component: () => import('../views/waiting/index.vue'),
         },
         {
-          path: '/explore', // 发现页
+          path: 'explore', // 发现页 - 使用相对路径
           name: 'explore',
           component: () => import('../views/explore/index.vue'),
         },
         {
-          path: '/education', // 知乎知学堂页
+          path: 'education', // 知乎知学堂页 - 使用相对路径
           name: 'education',
           component: () => import('../views/education/index.vue'),
         },

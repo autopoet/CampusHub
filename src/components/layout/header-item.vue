@@ -1,0 +1,82 @@
+<script setup>
+defineOptions({
+  name: 'HeaderItem'
+})
+
+import { ref } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+
+const searchQuery = ref('')
+
+const handleSearch = () => {
+  console.log('搜索内容:', searchQuery.value)
+}
+</script>
+
+<template>
+  <div class="header-item">
+    <div class="search-wrapper">
+      <el-icon class="search-icon"><Search /></el-icon>
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="搜索你感兴趣的内容..."
+        class="search-input"
+        @keyup.enter="handleSearch"
+      />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.header-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 400px;
+  height: 40px;
+  background: #f6f6f6;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  transition: all 0.3s ease;
+}
+
+.search-wrapper:hover {
+  background: #ebebeb;
+}
+
+.search-wrapper:focus-within {
+  background: #fff;
+  box-shadow: 0 0 0 1px #e0e0e0;
+}
+
+.search-icon {
+  font-size: 18px;
+  color: #8590a6;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #121212;
+  font-weight: 400;
+}
+
+.search-input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+</style>
