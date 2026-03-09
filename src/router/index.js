@@ -60,6 +60,11 @@ const router = createRouter({
           name: 'education',
           component: () => import('../views/education/index.vue'),
         },
+        {
+          path: 'detail/:id', // 详情页，使用动态路由匹配 ID
+          name: 'detail',
+          component: () => import('../views/detail/index.vue'),
+        },
       ]
     },
   ],
