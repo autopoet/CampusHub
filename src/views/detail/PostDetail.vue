@@ -68,10 +68,44 @@ const detailData = computed(() => {
   }
 })
 
+// ============== 动态提取目录 (TOC) 与内容解析 ==============
+const parsedContent = computed(() => {
+  let html = detailData.value.content || ''
+  return html.replace(/<h3[^>]*>(.*?)<\/h3>/g, (match, p1) => {
+    const id = p1.replace(/<[^>]+>/g, '').trim()
+    return `<h3 id="${id}">${p1}</h3>`
+  })
+})
+
+const tocLinks = computed(() => {
+  const links = []
+  const html = detailData.value.content || ''
+  const regex = /<h3[^>]*>(.*?)<\/h3>/g
+  let match
+  while ((match = regex.exec(html)) !== null) {
+    links.push(match[1].replace(/<[^>]+>/g, '').trim())
+  }
+  return links
+})
+
+const scrollToAnchor = (id) => {
+  const el = document.getElementById(id)
+  if (el) {
+    const y = el.getBoundingClientRect().top + window.scrollY - 80
+    window.scrollTo({ top: y, behavior: 'smooth' })
+  }
+}
+
 // ============== 交互逻辑 ==============
+const isLikedAnim = ref(false)
+
 const toggleFavorite = () => {
   if(detailData.value.type !== 'unknown') {
     detailData.value.isFavorite = !detailData.value.isFavorite
+    if (detailData.value.isFavorite) {
+      isLikedAnim.value = true
+      setTimeout(() => { isLikedAnim.value = false }, 800)
+    }
   }
 }
 
@@ -129,26 +163,27 @@ const submitApplication = () => {
 
 <template>
   <div class="page-background">
-    <!-- 顶部导航条 -->
-    <header class="detail-header">
-      <div class="header-inner">
-        <button class="gh-btn-subtle" @click="goBack">
-          <svg viewBox="0 0 24 24" class="icon"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-          返回大厅
-        </button>
-        <div class="header-actions">
-           <button class="action-btn" :class="{ 'is-favorite': detailData.isFavorite }" @click="toggleFavorite">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            <span class="text-hide-mobile">{{ detailData.isFavorite ? '已收藏' : '收藏' }}</span>
-          </button>
-        </div>
-      </div>
-    </header>
-
     <!-- 核心排版：左侧正文，右侧悬浮卡片 -->
     <div class="layout-wrapper">
       <main class="main-content">
         <article class="article-box">
+          <!-- 内部导航区：返回大厅与收藏 -->
+          <div class="card-top-actions">
+            <button class="gh-btn-subtle mini-back" @click="goBack">
+              <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right:4px;"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+              返回大厅
+            </button>
+            <button 
+              class="action-btn" 
+              :class="{ 'is-favorite': detailData.isFavorite, 'anim-pop': isLikedAnim }" 
+              @click="toggleFavorite"
+            >
+              <svg v-if="detailData.isFavorite" class="btn-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg v-else class="btn-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+              <span class="text-hide-mobile">{{ detailData.isFavorite ? '已收藏' : '收藏' }}</span>
+            </button>
+          </div>
+
           <h1 class="article-title">
             <span v-if="detailData.type === 'recruit'" class="status-badge bg-green">招募</span>
             <span v-if="detailData.type === 'share'" class="status-badge bg-blue">分享</span>
@@ -164,7 +199,7 @@ const submitApplication = () => {
           </div>
 
           <!-- 现代排版 Markdown 内容渲染区 -->
-          <div class="markdown-body" v-html="detailData.content"></div>
+          <div class="markdown-body" v-html="parsedContent"></div>
           
           <div class="article-tags" v-if="detailData.tags && detailData.tags.length">
              <span class="tech-tag" v-for="tag in detailData.tags" :key="tag"># {{ tag }}</span>
@@ -204,6 +239,16 @@ const submitApplication = () => {
               >
                 {{ applyStatus === 'none' ? '立刻申请入队' : applyStatus === 'reviewing' ? '等待对方回复...' : '组队成功' }}
               </button>
+          </div>
+
+          <!-- 目录卡片 (TOC) -->
+          <div class="toc-card" v-if="tocLinks.length > 0">
+            <div class="toc-header">本页目录</div>
+            <ul class="toc-list">
+              <li v-for="link in tocLinks" :key="link" class="toc-item" @click="scrollToAnchor(link)">
+                {{ link }}
+              </li>
+            </ul>
           </div>
         </div>
       </aside>
@@ -253,28 +298,6 @@ const submitApplication = () => {
   padding-bottom: 60px;
 }
 
-/* 顶部导航 */
-.detail-header {
-  position: sticky;
-  top: 60px; /* 紧贴全局导航栏下方，避免被遮挡 */
-  background: var(--color-canvas-overlay);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border-default);
-  z-index: 50;
-  height: 52px;
-}
-
-.header-inner {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 0 20px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 /* 大厂两栏布局 */
 .layout-wrapper {
   max-width: 1040px;
@@ -296,7 +319,21 @@ const submitApplication = () => {
 }
 
 .article-box {
-  padding: 32px;
+  padding: 24px 32px 32px;
+}
+
+.card-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.mini-back {
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
 .article-title {
@@ -417,7 +454,7 @@ const submitApplication = () => {
 /* 右侧侧边栏 */
 .sticky-sidebar {
   position: sticky;
-  top: 124px; /* 60px main nav + 52px detail nav + 12px gap */
+  top: 84px; /* 60px main nav + 24px gap */
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -533,9 +570,78 @@ const submitApplication = () => {
   transform: none !important;
 }
 
-.action-btn { background: none; border: none; font-size: 14px; font-weight: 500; color: var(--color-fg-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.action-btn.is-favorite { color: #eab308; }
+.action-btn { background: none; border: none; font-size: 14px; font-weight: 500; color: var(--color-fg-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; position: relative;}
+.action-btn.is-favorite { color: #f43f5e; }
 .action-btn:hover { color: var(--color-fg-default); }
+
+/* 收藏点赞微动效 */
+.anim-pop .btn-icon {
+  animation: heart-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes heart-pop {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.8); }
+  50% { transform: scale(1.3); }
+  75% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* TOC 目录卡片 */
+.toc-card {
+  background: transparent;
+  padding: 0 4px;
+}
+
+.toc-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-fg-default);
+  margin-bottom: 12px;
+  padding-left: 8px;
+}
+
+.toc-list {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.toc-list::before {
+  content: '';
+  position: absolute;
+  left: 3px; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--color-border-subtle);
+}
+
+.toc-item {
+  font-size: 13px;
+  color: var(--color-fg-muted);
+  padding: 6px 16px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.toc-item:hover {
+  color: var(--color-accent-fg);
+}
+
+.toc-item::before {
+  content: '';
+  position: absolute;
+  left: 1px; top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.toc-item:hover::before {
+  background: var(--color-accent-fg);
+}
 
 /* 模态框 Teleport (极客风) */
 .modal-overlay {

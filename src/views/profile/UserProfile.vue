@@ -44,6 +44,20 @@ const myJoined = ref([
     date: '2025-10-12'
   }
 ])
+
+// ============= 热力图 (GitHub style heatmap) =============
+const heatmapDays = ref([])
+const generateHeatmap = () => {
+  const days = []
+  // 生成过去一年的假数据 (52 周 * 7 天 = 364)
+  for(let i = 0; i < 364; i++) {
+    // 随机活跃等级 0-4
+    const level = Math.random() > 0.65 ? Math.floor(Math.random() * 4) + 1 : 0
+    days.push({ id: i, level })
+  }
+  heatmapDays.value = days
+}
+generateHeatmap()
 </script>
 
 <template>
@@ -107,6 +121,33 @@ const myJoined = ref([
         >
           <div class="tag-glow"></div>
           <span class="tag-text">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 活跃度热力图面板 -->
+    <div class="heatmap-section modern-panel">
+      <h3 class="section-title">活跃矩阵 // ACTIVITY_MATRIX</h3>
+      <div class="heatmap-container">
+        <div class="heatmap-scroll">
+          <div class="heatmap-grid">
+            <div 
+              v-for="day in heatmapDays" 
+              :key="day.id"
+              class="heatmap-cell"
+              :data-level="day.level"
+              :title="`活跃度: Level ${day.level}`"
+            ></div>
+          </div>
+        </div>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <div class="heatmap-cell" data-level="0"></div>
+          <div class="heatmap-cell" data-level="1"></div>
+          <div class="heatmap-cell" data-level="2"></div>
+          <div class="heatmap-cell" data-level="3"></div>
+          <div class="heatmap-cell" data-level="4"></div>
+          <span>More</span>
         </div>
       </div>
     </div>
@@ -442,6 +483,71 @@ const myJoined = ref([
 }
 [data-theme='dark'] .float-tag:hover .tag-glow {
   opacity: 0.6;
+}
+
+/* 活跃度热力图 */
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heatmap-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+/* 隐藏滚动条但保留功能 */
+.heatmap-scroll::-webkit-scrollbar { height: 4px; }
+.heatmap-scroll::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 4px; }
+
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background-color: var(--color-canvas-subtle);
+  border: 1px solid rgba(27, 31, 36, 0.04);
+  transition: transform 0.1s;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.4);
+  border-color: var(--color-border-muted);
+  z-index: 10;
+}
+
+[data-theme='dark'] .heatmap-cell { border-color: rgba(255, 255, 255, 0.05); }
+
+/* 极客品牌色热力等级 */
+.heatmap-cell[data-level="1"] { background-color: rgba(9, 105, 218, 0.3); }
+.heatmap-cell[data-level="2"] { background-color: rgba(9, 105, 218, 0.55); }
+.heatmap-cell[data-level="3"] { background-color: rgba(9, 105, 218, 0.8); }
+.heatmap-cell[data-level="4"] { background-color: rgba(9, 105, 218, 1); }
+
+[data-theme='dark'] .heatmap-cell[data-level="1"] { background-color: rgba(47, 129, 247, 0.3); }
+[data-theme='dark'] .heatmap-cell[data-level="2"] { background-color: rgba(47, 129, 247, 0.55); }
+[data-theme='dark'] .heatmap-cell[data-level="3"] { background-color: rgba(47, 129, 247, 0.8); }
+[data-theme='dark'] .heatmap-cell[data-level="4"] { background-color: rgba(47, 129, 247, 1); }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-fg-muted);
+}
+
+.heatmap-legend span {
+  margin: 0 4px;
 }
 
 /* 极客风 Tab 切换 */

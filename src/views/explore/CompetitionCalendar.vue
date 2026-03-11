@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { computed, ref, inject } from "vue"
 
 const openPublishModal = inject("openPublishModal")
@@ -10,45 +10,45 @@ const rawCompetitions = [
     id: 1,
     name: "第十五届蓝桥杯全国软件和信息技术专业人才大赛",
     level: "国家级",
-    levelColor: "#f59e0b",
+    levelColor: "#3b82f6",
     deadline: "2026-04-15",
-    desc: "国内最权威的IT类竞赛，Web应用开发赛道和Java/C/C++赛道含金量极高，是大厂实习敲门砖。大三大四必参加。",
-    tags: ["单人/团队", "算法", "Web开发"],
-    reward: "¥20,000",
-    teamSize: "1-3人",
-    organizer: "工业和信息化部"
+    desc: "工信部人才交流中心举办，全国规模最大的IT类学科竞赛。包含C/C++、Java、Python算法赛道及Web、软件测试等开发赛道。保研加分利器，大厂绿卡。",
+    tags: ["算法", "Web开发", "保研加分"],
+    reward: "国一 ¥10,000",
+    teamSize: "个人赛 / 1-3人",
+    organizer: "工信部人才交流中心"
   },
   {
     id: 2,
-    name: "中国国际大学生创新大赛（原互联网+）",
+    name: "2026 年中国大学生计算机设计大赛",
     level: "国家级",
-    levelColor: "#ef4444",
-    deadline: "2026-05-20",
-    desc: "全国规模最大、含金量最高的创新创业赛事。需跨专业组队（技术+商业BP+设计），项目落地即可参赛。",
-    tags: ["创新创业", "商业企划", "跨专业"],
-    reward: "¥50,000",
-    teamSize: "5人以内",
-    organizer: "教育部"
+    levelColor: "#ec4899",
+    deadline: "2026-05-10",
+    desc: "中国高等教育学会主办的A类赛事。项目涵盖软件应用开发、微课、数字媒体、人工智能应用等。侧重于项目的完整度和现场PPT答辩呈现能力。",
+    tags: ["软件开发", "人工智能", "数字媒体"],
+    reward: "校级支持金",
+    teamSize: "1-3人",
+    organizer: "中国大学生计算机设计大赛组委会"
   },
   {
     id: 3,
-    name: "全国大学生数学建模竞赛（高教社杯）",
-    level: "国家级",
-    levelColor: "#8b5cf6",
-    deadline: "2026-09-05",
-    desc: "极限三天三夜封闭挑战。黄金铁三角：建模大神 + 编程高手 + 论文排版手，少一个都不行。",
-    tags: ["三人组队", "数学建模", "论文写作"],
-    reward: "¥10,000",
-    teamSize: "3人",
-    organizer: "中国工业与应用数学学会"
+    name: "“挑战杯”全国大学生课外学术科技作品竞赛",
+    level: "挑战杯",
+    levelColor: "#eab308",
+    deadline: "2026-03-20",
+    desc: "中国大学生三大顶流科技赛事之一，被誉为大学生科技创新“奥林匹克”。涵盖自然科学、哲学社会科学、科技发明制作等三大类，创业/保研极高权重。",
+    tags: ["学术作品", "科技发明", "最高权重"],
+    reward: "保研直通车",
+    teamSize: "1-8人",
+    organizer: "共青团中央、中国科协、教育部"
   },
   {
     id: 4,
     name: "微信小程序应用开发赛",
-    level: "省级",
+    level: "省市级",
     levelColor: "#10b981",
     deadline: "2026-03-01",
-    desc: "由腾讯微信团队主办，适合有Vue/React基础的同学，开发周期短，社会认可度高，奖金丰厚。",
+    desc: "由腾讯微信团队与清华大学联合主办，鼓励基于微信生态开发创新性的小程序，包括云开发、小游戏等。获奖者直接对接微信实习通道。",
     tags: ["微信生态", "敏捷开发", "前端"],
     reward: "¥8,000",
     teamSize: "2-4人",
@@ -91,7 +91,7 @@ const stats = computed(() => ({
   }).length
 }))
 
-const goToRecruit = (compName) => {
+const goToRecruit = () => {
   openPublishModal("recruit")
 }
 </script>

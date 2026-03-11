@@ -1,89 +1,129 @@
 <template>
-  <div class="skeleton-card">
-    <div class="skeleton-header">
-      <div class="skeleton-avatar skeleton-shimmer"></div>
-      <div class="skeleton-author-info">
-        <div class="skeleton-line short skeleton-shimmer"></div>
-        <div class="skeleton-line x-short skeleton-shimmer"></div>
+  <article class="skeleton-card">
+    <div class="card-accent-bar skeleton-shimmer"></div>
+    
+    <header class="feed-header">
+      <div class="header-main">
+        <div class="skeleton-avatar skeleton-shimmer"></div>
+        <div class="header-text">
+          <div class="skeleton-line skeleton-shimmer" style="width: 80px; height: 14px; margin-bottom: 6px;"></div>
+          <div class="skeleton-line skeleton-shimmer" style="width: 50px; height: 12px;"></div>
+        </div>
       </div>
-    </div>
-    <div class="skeleton-title skeleton-line skeleton-shimmer"></div>
-    <div class="skeleton-content">
-      <div class="skeleton-line skeleton-shimmer"></div>
-      <div class="skeleton-line skeleton-shimmer"></div>
-      <div class="skeleton-line last skeleton-shimmer"></div>
-    </div>
-    <div class="skeleton-footer">
-      <div class="skeleton-btn skeleton-shimmer"></div>
-      <div class="skeleton-btn skeleton-shimmer"></div>
-      <div class="skeleton-btn skeleton-shimmer"></div>
-    </div>
-  </div>
+      <div class="feed-source">
+        <div class="skeleton-line skeleton-shimmer" style="width: 60px; height: 12px; margin: 0;"></div>
+      </div>
+    </header>
+
+    <main class="feed-main">
+      <div class="skeleton-line skeleton-shimmer" style="width: 70%; height: 20px; margin-bottom: 12px;"></div>
+      
+      <div class="feed-desc">
+        <div class="skeleton-line skeleton-shimmer" style="width: 100%; height: 14px; margin-bottom: 8px;"></div>
+        <div class="skeleton-line skeleton-shimmer" style="width: 85%; height: 14px; margin-bottom: 8px;"></div>
+        <div class="skeleton-line skeleton-shimmer" style="width: 60%; height: 14px; margin-bottom: 16px;"></div>
+      </div>
+      
+      <div class="feed-tags">
+        <div class="skeleton-tag skeleton-shimmer"></div>
+        <div class="skeleton-tag skeleton-shimmer" style="width: 60px;"></div>
+        <div class="skeleton-tag skeleton-shimmer" style="width: 80px;"></div>
+      </div>
+    </main>
+
+    <footer class="feed-footer">
+      <div class="footer-stats">
+        <div class="skeleton-line skeleton-shimmer" style="width: 40px; height: 14px;"></div>
+        <div class="skeleton-line skeleton-shimmer" style="width: 40px; height: 14px;"></div>
+      </div>
+      
+      <div class="footer-actions">
+        <div class="skeleton-btn skeleton-shimmer"></div>
+      </div>
+    </footer>
+  </article>
 </template>
 
 <style scoped>
 .skeleton-card {
-  padding: 20px;
+  position: relative;
   background: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
-  border-radius: 16px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.skeleton-header {
+.card-accent-bar {
+  height: 4px;
+  width: 100%;
+  background: var(--color-border-muted);
+}
+
+.feed-header {
+  padding: 16px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-main {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
 }
 
 .skeleton-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.skeleton-author-info {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.skeleton-line {
-  height: 12px;
   background-color: var(--color-canvas-subtle);
-  border-radius: 4px;
-  margin-bottom: 10px;
-  width: 100%;
 }
 
-.skeleton-line.short { width: 30%; }
-.skeleton-line.x-short { width: 15%; height: 8px; }
-.skeleton-line.last { width: 60%; }
-
-.skeleton-title {
-  height: 20px;
-  margin-bottom: 16px;
-  width: 80%;
+.feed-main {
+  padding: 0 20px;
+  flex: 1;
 }
 
-.skeleton-content {
-  margin-bottom: 20px;
-}
-
-.skeleton-footer {
+.feed-tags {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.skeleton-tag {
+  height: 24px;
+  width: 50px;
+  border-radius: 12px;
+  background-color: var(--color-canvas-subtle);
+}
+
+.feed-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border-default);
+  background: var(--color-canvas-subtle);
+}
+
+.footer-stats {
+  display: flex;
+  gap: 16px;
 }
 
 .skeleton-btn {
   width: 80px;
   height: 32px;
   border-radius: 8px;
+  background-color: var(--color-border-muted);
+}
+
+.skeleton-line {
   background-color: var(--color-canvas-subtle);
+  border-radius: 4px;
 }
 
 /* 高级扫光动画 */
@@ -102,15 +142,8 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    transparent,
-    rgba(255, 255, 255, 0.08),
-    transparent
-  );
-  /* 在浅色模式下使用暗色光，在暗色模式下使用亮色光 */
-  background: linear-gradient(
-    90deg,
     rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.4) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   animation: shimmer 1.5s infinite;

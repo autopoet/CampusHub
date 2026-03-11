@@ -11,10 +11,24 @@ const router = useRouter()
 
 // 消息数量
 const messageCount = ref(5)
-const privateMessageCount = ref(3)
 
 // 下拉菜单显示状态
 const showDropdown = ref(false)
+const showNoticePanel = ref(false)
+const showTeamPanel = ref(false)
+
+// 模拟的拉取数据
+const notifications = ref([
+  { id: 1, type: 'apply', content: '用户 [极客阿飞] 申请加入你的队伍《Web3 骇客马拉松》', time: '10分钟前', read: false },
+  { id: 2, type: 'system', content: '你的文章《Vue3 渲染原理解析》已被推荐至首页', time: '2小时前', read: false },
+  { id: 3, type: 'reply', content: '[小明] 回复了你的评论: "受教了，感谢大佬！"', time: '昨天 14:30', read: true },
+  { id: 4, type: 'apply', content: '你申请加入的《基于 AI 的代码审查工具》已被队长同意', time: '3天前', read: true }
+])
+
+const myTeamsList = ref([
+  { id: 1, name: 'Web3 骇客马拉松', role: '队长', status: '招募中', members: 3 },
+  { id: 2, name: '大创：校园二手书交易平台', role: '前端架构', status: '进行中', members: 5 }
+])
 
 // 主题切换逻辑
 const isDark = ref(false)
@@ -56,22 +70,83 @@ const handleMouseLeave = () => {
 
 <template>
   <div class="header-userinfo">
-    <!-- 消息图标 -->
-    <div class="icon-wrapper">
+    <!-- 消息通知面板 -->
+    <div 
+      class="icon-wrapper popover-trigger" 
+      @mouseenter="showNoticePanel = true" 
+      @mouseleave="showNoticePanel = false"
+    >
       <div class="icon-box">
         <el-icon class="info-icon"><ChatDotRound /></el-icon>
         <span v-if="messageCount > 0" class="badge">{{ messageCount }}</span>
       </div>
       <span class="icon-text">组队通知</span>
+
+      <!-- 通知下拉面板 -->
+      <transition name="dropdown-fade">
+        <div class="rich-dropdown-panel notice-panel" v-show="showNoticePanel">
+          <div class="panel-header">
+            <span class="panel-title">通知中心</span>
+            <span class="panel-action">全部标为已读</span>
+          </div>
+          <div class="panel-body">
+            <div 
+              v-for="msg in notifications" 
+              :key="msg.id" 
+              class="notice-item"
+              :class="{ 'is-unread': !msg.read }"
+            >
+              <div class="notice-icon" :class="'type-' + msg.type"></div>
+              <div class="notice-content">
+                <p class="notice-text">{{ msg.content }}</p>
+                <span class="notice-time">{{ msg.time }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel-footer">查看所有通知</div>
+        </div>
+      </transition>
     </div>
 
-    <!-- 私信图标 -->
-    <div class="icon-wrapper">
+    <!-- 我的队伍面板 -->
+    <div 
+      class="icon-wrapper popover-trigger"
+      @mouseenter="showTeamPanel = true" 
+      @mouseleave="showTeamPanel = false"
+    >
       <div class="icon-box">
         <el-icon class="info-icon"><Message /></el-icon>
-        <span v-if="privateMessageCount > 0" class="badge">{{ privateMessageCount }}</span>
+        <span class="badge" style="background-color: var(--color-success-fg);">{{ myTeamsList.length }}</span>
       </div>
       <span class="icon-text">我的队伍</span>
+
+      <!-- 队伍下拉面板 -->
+      <transition name="dropdown-fade">
+        <div class="rich-dropdown-panel team-panel" v-show="showTeamPanel">
+          <div class="panel-header">
+            <span class="panel-title">我的阵列</span>
+            <span class="panel-action" @click="router.push('/home/recruit')">寻找新队伍</span>
+          </div>
+          <div class="panel-body">
+            <div v-for="team in myTeamsList" :key="team.id" class="team-item">
+              <div class="team-info-top">
+                <span class="team-name">{{ team.name }}</span>
+                <span class="team-status" :class="team.status === '招募中' ? 'status-green' : 'status-blue'">
+                  {{ team.status }}
+                </span>
+              </div>
+              <div class="team-info-bottom">
+                <span class="team-role">{{ team.role }}</span>
+                <span class="team-members">成员: {{ team.members }}/6</span>
+              </div>
+            </div>
+            <div v-if="myTeamsList.length === 0" class="empty-panel">
+              尚未加入任何队伍
+            </div>
+          </div>
+          <div class="panel-footer">进入指挥中心</div>
+        </div>
+      </transition>
     </div>
 
     <!-- 主题切换图标 -->
@@ -218,6 +293,154 @@ const handleMouseLeave = () => {
 .dropdown-item .el-icon {
   font-size: 16px;
   color: var(--color-fg-muted);
+}
+
+/* 富交互下拉面板 (通知 & 队伍) */
+.popover-trigger {
+  position: relative;
+}
+
+.rich-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: -60px; /* 偏向左侧展现 */
+  width: 340px;
+  background: var(--color-canvas-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: default;
+}
+
+[data-theme='dark'] .rich-dropdown-panel {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+/* 顶部小三角指标 */
+.rich-dropdown-panel::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: var(--color-canvas-default);
+  border-left: 1px solid var(--color-border-default);
+  border-top: 1px solid var(--color-border-default);
+}
+
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-canvas-subtle);
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-fg-default);
+}
+
+.panel-action {
+  font-size: 12px;
+  color: var(--color-accent-fg);
+  cursor: pointer;
+}
+.panel-action:hover { text-decoration: underline; }
+
+.panel-body {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* 滚动条美化 */
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 4px; }
+
+.panel-footer {
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  border-top: 1px solid var(--color-border-muted);
+  cursor: pointer;
+  background: var(--color-canvas-subtle);
+  transition: color 0.2s;
+}
+.panel-footer:hover { color: var(--color-accent-fg); }
+
+/* 通知列表项 */
+.notice-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+.notice-item:hover { background-color: var(--color-btn-hover-bg); }
+.notice-item.is-unread { background-color: rgba(9, 105, 218, 0.05); }
+
+.notice-icon {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.is-unread .notice-icon { background-color: var(--color-accent-fg); box-shadow: 0 0 8px var(--color-accent-fg); }
+.notice-item:not(.is-unread) .notice-icon { background-color: var(--color-border-default); }
+
+.notice-content { display: flex; flex-direction: column; gap: 4px; }
+.notice-text { font-size: 13px; color: var(--color-fg-default); line-height: 1.4; margin: 0; }
+.notice-time { font-size: 11px; color: var(--color-fg-subtle); }
+
+/* 队伍列表项 */
+.team-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.team-item:last-child { border-bottom: none; }
+.team-item:hover { background-color: var(--color-btn-hover-bg); }
+
+.team-info-top, .team-info-bottom { display: flex; justify-content: space-between; align-items: center; }
+.team-name { font-size: 14px; font-weight: 600; color: var(--color-fg-default); }
+.team-status { font-size: 11px; padding: 2px 6px; border-radius: 12px; }
+.status-green { background: rgba(45, 164, 78, 0.1); color: #2da44e; }
+.status-blue { background: rgba(9, 105, 218, 0.1); color: var(--color-accent-fg); }
+
+.team-role { font-size: 12px; color: var(--color-fg-muted); }
+.team-members { font-size: 12px; color: var(--color-fg-subtle); display: flex; align-items: center; gap: 4px; }
+
+.empty-panel {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--color-fg-subtle);
+  font-size: 13px;
+}
+
+/* 动画 */
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: opacity 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
 }
 
 @media screen and (max-width: 768px) {
