@@ -10,64 +10,68 @@ const router = createRouter({
     {
       path: '/login', // 登录页
       name: 'login',
-      component: () => import('../views/login/index.vue'),
+      component: () => import('../views/login/LoginView.vue'),
     },
     {
       path: '/home', // 布局页
       name: 'home',
-      component: () => import('../components/layout/index.vue'),
+      component: () => import('../components/layout/MainLayout.vue'),
+      meta: { requiresAuth: true }, 
       children: [
         {
-          path: 'index', // 首页 - 使用相对路径
+          path: 'index', // 首页
           name: 'index',
-          redirect: '/home/index/interest', // 重定向到关注页
-          component: () => import('../views/index/index.vue'),
+          redirect: '/home/index/recruit', // 默认跳招募大厅
+          component: () => import('../views/home/HomeView.vue'),
           children: [
             {
-              path: 'interest', // 关注页 - 使用相对路径
-              name: 'interest',
-              component: () => import('../views/index/interest/index.vue'),
+              path: 'recruit',
+              name: 'recruit',
+              component: () => import('../views/recruit/RecruitList.vue'),
             },
             {
-              path: 'recommend', // 推荐页 - 使用相对路径
-              name: 'recommend',
-              component: () => import('../views/index/recommend/index.vue'),
-            },
-            {
-              path: 'hotlist', // 热榜页 - 使用相对路径
-              name: 'hotlist',
-              component: () => import('../views/index/hotlist/index.vue'),
-            },
-            {
-              path: 'video', // 视频页 - 使用相对路径
-              name: 'video',
-              component: () => import('../views/index/video/index.vue'),
+              path: 'share',
+              name: 'share',
+              component: () => import('../views/share/ShareList.vue'),
             }
           ]
         },
         {
-          path: 'waiting', // 等你来答页 - 使用相对路径
-          name: 'waiting',
-          component: () => import('../views/waiting/index.vue'),
-        },
-        {
-          path: 'explore', // 发现页 - 使用相对路径
+          path: 'explore', // 竞赛大厅(日历)页
           name: 'explore',
-          component: () => import('../views/explore/index.vue'),
+          component: () => import('../views/explore/CompetitionCalendar.vue'),
         },
         {
-          path: 'education', // 知乎知学堂页 - 使用相对路径
-          name: 'education',
-          component: () => import('../views/education/index.vue'),
-        },
-        {
-          path: 'detail/:id', // 详情页，使用动态路由匹配 ID
+          path: 'detail/:id',
           name: 'detail',
-          component: () => import('../views/detail/index.vue'),
+          component: () => import('../views/detail/PostDetail.vue'),
         },
+        {
+          path: 'profile', // 个人大满贯主页
+          name: 'profile',
+          component: () => import('../views/profile/UserProfile.vue'),
+        }
       ]
     },
   ],
+})
+
+// 全局前置路由守卫
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    const token = 'fake-jwt-token-for-test' 
+    if (!token) {
+      console.warn('🚧 路由守卫拦截：无 Token，访问受限')
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath } 
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

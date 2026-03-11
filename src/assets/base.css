@@ -1,53 +1,98 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* ============================================================
+   CampusHub Design System - Complete Token Library
+   Light: #eaeef2 page bg, #ffffff card bg (clear hierarchy)
+   Dark:  #0d1117 page bg, #161b22 card bg
+   ============================================================ */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  /* === Text === */
+  --color-fg-default: #1f2328;
+  --color-fg-muted: #656d76;
+  --color-fg-subtle: #6e7781;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  /* === Surfaces (明亮模式下背景有明显层次) === */
+  --color-canvas-default: #ffffff;        /* 卡片/面板：纯白 */
+  --color-canvas-subtle: #eaeef2;         /* 页面背景：明显灰蓝色，与卡片产生清晰层次 */
+  --color-canvas-overlay: #ffffff;        /* 弹窗等浮层 */
 
-  --vt-c-indigo: #2c3e50;
+  /* === Borders === */
+  --color-border-default: #d0d7de;
+  --color-border-muted: hsla(210, 18%, 87%, 1);
+  --color-border-subtle: rgba(208, 215, 222, 0.5);
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* === Accent (Blue) === */
+  --color-accent-fg: #0969da;
+  --color-accent-subtle: rgba(9, 105, 218, 0.06);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  /* === Success (Green) === */
+  --color-success-fg: #1a7f37;
+  --color-success-subtle: #dafbe1;
+  --color-success-bg: #2da44e;
+
+  /* === Attention (Yellow/Gold) === */
+  --color-attention-fg: #9a6700;
+  --color-attention-subtle: #fff8c5;
+  --color-attention-muted: rgba(212, 167, 44, 0.4);
+
+  /* === Danger (Red) === */
+  --color-danger-fg: #cf222e;
+  --color-danger-subtle: #fff0ee;
+
+  /* === Buttons === */
+  --color-btn-primary-bg: #2da44e;
+  --color-btn-primary-hover-bg: #2c974b;
+  --color-btn-primary-border: rgba(27, 31, 36, 0.15);
+  --color-btn-bg: #f6f8fa;
+  --color-btn-hover-bg: #f3f4f6;
+
+  /* === Misc === */
+  --color-shadow: rgba(140, 149, 159, 0.25);
+  --header-bg: rgba(255, 255, 255, 0.92);
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+[data-theme='dark'] {
+  /* === Text === */
+  --color-fg-default: #e6edf3;
+  --color-fg-muted: #7d8590;
+  --color-fg-subtle: #6e7681;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  /* === Surfaces (暗黑模式层次同样清晰) === */
+  --color-canvas-default: #161b22;        /* 卡片：深蓝黑 */
+  --color-canvas-subtle: #0d1117;         /* 页面背景：最深 */
+  --color-canvas-overlay: #1c2128;        /* 弹窗浮层 */
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  /* === Borders === */
+  --color-border-default: #30363d;
+  --color-border-muted: #21262d;
+  --color-border-subtle: rgba(48, 54, 61, 0.5);
 
-  --section-gap: 160px;
-}
+  /* === Accent === */
+  --color-accent-fg: #2f81f7;
+  --color-accent-subtle: rgba(47, 129, 247, 0.1);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+  /* === Success === */
+  --color-success-fg: #3fb950;
+  --color-success-subtle: rgba(46, 160, 67, 0.15);
+  --color-success-bg: #238636;
 
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
+  /* === Attention === */
+  --color-attention-fg: #d4a72c;
+  --color-attention-subtle: rgba(212, 167, 44, 0.15);
+  --color-attention-muted: rgba(212, 167, 44, 0.4);
 
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
+  /* === Danger === */
+  --color-danger-fg: #f85149;
+  --color-danger-subtle: rgba(248, 81, 73, 0.1);
+
+  /* === Buttons === */
+  --color-btn-primary-bg: #238636;
+  --color-btn-primary-hover-bg: #2ea043;
+  --color-btn-primary-border: rgba(240, 246, 252, 0.1);
+  --color-btn-bg: #21262d;
+  --color-btn-hover-bg: #30363d;
+
+  /* === Misc === */
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  --header-bg: rgba(13, 17, 23, 0.92);
 }
 
 *,
@@ -60,27 +105,22 @@
 
 body {
   min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
+  color: var(--color-fg-default);
+  background: var(--color-canvas-subtle);
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--color-accent-fg);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }

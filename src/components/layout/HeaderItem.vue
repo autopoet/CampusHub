@@ -41,12 +41,13 @@ const handleSearch = () => {
   width: 100%;
   max-width: 400px;
   height: 40px;
-  background: #f6f6f6;
+  background: var(--color-canvas-subtle);
   border-radius: 20px;
   display: flex;
   align-items: center;
   padding: 0 16px;
   transition: all 0.3s ease;
+  border: 1px solid transparent; /* Prepare for focus state */
 }
 
 @media screen and (max-width: 768px) {
@@ -56,17 +57,18 @@ const handleSearch = () => {
 }
 
 .search-wrapper:hover {
-  background: #ebebeb;
+  background: var(--color-btn-hover-bg);
 }
 
 .search-wrapper:focus-within {
-  background: #fff;
-  box-shadow: 0 0 0 1px #e0e0e0;
+  background: var(--color-canvas-default);
+  border-color: var(--color-accent-fg);
+  box-shadow: 0 0 0 1px var(--color-accent-fg);
 }
 
 .search-icon {
   font-size: 18px;
-  color: #8590a6;
+  color: var(--color-fg-muted);
   margin-right: 12px;
   flex-shrink: 0;
 }
@@ -78,12 +80,12 @@ const handleSearch = () => {
   outline: none;
   background: transparent;
   font-size: 15px;
-  color: #121212;
+  color: var(--color-fg-default);
   font-weight: 400;
 }
 
 .search-input::placeholder {
-  color: #999;
+  color: var(--color-fg-subtle);
   font-weight: 400;
 }
 </style>
