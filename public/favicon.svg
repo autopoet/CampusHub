@@ -1,0 +1,14 @@
+<svg width="120" height="120" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 极简六边形扣环 (代表校园) -->
+  <path d="M20 4L33.8564 12V28L20 36L6.14359 28V12L20 4Z" stroke="url(#logo_grad)" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- 核心连接点 (代表 Hub) -->
+  <circle cx="20" cy="20" r="4" fill="url(#logo_grad)"/>
+  <!-- 三条连接线 (代表连接) -->
+  <path d="M20 20L30 14M20 20L20 31M20 20L10 14" stroke="url(#logo_grad)" stroke-width="2" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="logo_grad" x1="6" y1="4" x2="34" y2="36" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
