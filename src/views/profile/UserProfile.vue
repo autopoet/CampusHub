@@ -1,19 +1,15 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
-import * as echarts from 'echarts/core';
-import { RadarChart } from 'echarts/charts';
-import { TitleComponent, TooltipComponent } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
-
-echarts.use([TitleComponent, TooltipComponent, RadarChart, CanvasRenderer]);
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+// ECharts 已移除，改为原生 CSS 控制的 Bento 看板
 
 const userInfo = ref({
-  name: 'autopoet',
+  name: '前端小牛',
   role: '前端架构师 / 独立极客',
   bio: '保持对技术的热爱，持续探索 Web 渲染边界与次世代交互设计。',
   followers: 128,
   following: 56,
-  likes: 1024
+  likes: 1024,
+  avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Oliver&glassesProbability=100'
 })
 
 const skills = ref([
@@ -27,46 +23,11 @@ const stackTags = ['Vue3', 'Pinia', 'Vite', 'Element Plus', 'WebGL', 'Three.js',
 
 const activeTab = ref('posts')
 
-const myPosts = ref([
-  {
-    id: 1,
-    title: '蓝桥杯 Web 应用开发国赛组队，缺一后端！',
-    status: '招募中',
-    date: '2小时前'
-  },
-  {
-    id: 2,
-    title: '寻找 UI 设计师一起打磨大创项目',
-    status: '已满员',
-    date: '3天前'
-  }
-])
-
-// ECharts 雷达图逻辑
-const radarChartRef = ref(null)
-let radarChartInstance = null
+// Web Worker 引用
 let worker = null
 
 onMounted(() => {
   generateHeatmapViaWorker()
-
-  // 初始化 ECharts
-  if (radarChartRef.value) {
-    radarChartInstance = echarts.init(radarChartRef.value)
-    renderRadarChart()
-
-    // 监听主题变化与窗口缩放
-    const resizeObserver = new ResizeObserver(() => {
-      radarChartInstance.resize()
-    })
-    resizeObserver.observe(radarChartRef.value)
-
-    // 监听 HTML data-theme 属性变化
-    const themeObserver = new MutationObserver(() => {
-      renderRadarChart()
-    })
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-  }
 })
 
 onUnmounted(() => {
@@ -75,82 +36,25 @@ onUnmounted(() => {
   }
 })
 
-const renderRadarChart = () => {
-  if (!radarChartInstance) return
+// 核心战力指标 (用于 Bento 看板)
+const geekMetrics = computed(() => [
+  ...skills.value.map(s => ({ label: s.name, value: s.power, color: s.color })),
+  { label: '架构思维', value: 94, color: 'var(--color-accent-fg)' }
+])
 
-  const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark'
-  const textColor = isDarkMode ? '#8b949e' : '#57606a'
-  const lineColor = isDarkMode ? 'rgba(47, 129, 247, 0.5)' : 'rgba(9, 105, 218, 0.4)'
-  const areaColor = isDarkMode ? 'rgba(47, 129, 247, 0.2)' : 'rgba(9, 105, 218, 0.1)'
-  const splitLineColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'
+// ============= 极客进化论 (新功能) =============
+const honors = ref([
+  { id: 1, name: 'Vditor Master', icon: '📝', desc: '掌握 Markdown 深度集成', level: 'Gold' },
+  { id: 2, name: 'ECharts Artist', icon: '📊', desc: '解锁雷达图可视化技能', level: 'Silver' },
+  { id: 3, name: 'Worker Pioneer', icon: '⚙️', desc: '精通 Web Worker 多线程', level: 'Bronze' },
+  { id: 4, name: 'Glass Architect', icon: '✨', desc: '深刻理解玻璃拟物渲染', level: 'Silver' }
+])
 
-  const option = {
-    tooltip: {
-      trigger: 'item',
-      backgroundColor: isDarkMode ? '#1e2329' : '#fff',
-      borderColor: isDarkMode ? '#30363d' : '#d0d7de',
-      textStyle: { color: isDarkMode ? '#c9d1d9' : '#1f2328' }
-    },
-    radar: {
-      indicator: skills.value.map(s => ({ name: s.name, max: 100 })),
-      radius: '65%',
-      splitNumber: 4,
-      axisName: {
-        color: textColor,
-        fontWeight: 600,
-        fontFamily: "'Fira Code', monospace"
-      },
-      splitLine: {
-        lineStyle: {
-          color: [splitLineColor]
-        }
-      },
-      splitArea: {
-        areaStyle: {
-          color: ['transparent']
-        }
-      },
-      axisLine: {
-        lineStyle: {
-          color: splitLineColor
-        }
-      }
-    },
-    series: [
-      {
-        name: '能力值',
-        type: 'radar',
-        data: [
-          {
-            value: skills.value.map(s => s.power),
-            name: '综合战力',
-            symbol: 'circle',
-            symbolSize: 6,
-            itemStyle: {
-              color: isDarkMode ? '#2f81f7' : '#0969da'
-            },
-            lineStyle: {
-              color: lineColor,
-              width: 2
-            },
-            areaStyle: {
-              color: areaColor
-            }
-          }
-        ]
-      }
-    ]
-  };
-  radarChartInstance.setOption(option);
-}
-
-const myJoined = ref([
-  {
-    id: 3,
-    title: '计算机设计大赛 - “校园跑腿极速版”队伍',
-    role: '核心前端开发',
-    date: '2025-10-12'
-  }
+const growthTracks = ref([
+  { id: 1, stage: '核心引擎搭建', detail: '基于 Vite + Vue3 完成工程化地基，跑通 Pinia 状态流', date: '2025.10' },
+  { id: 2, stage: '高级组件封装', detail: '自主实现 GeekToast 全局通知与骨架屏扫光特效', date: '2025.11' },
+  { id: 3, stage: '数据维度交互', detail: '攻克路由 ID 冲突，完成收藏夹数据链路全线打通', date: '2025.12' },
+  { id: 4, stage: '极致性能调优', detail: '引入 Web Worker 异步计算，主线程负载降低 80%', date: '2026.01' }
 ])
 
 // ============= 热力图 (GitHub style heatmap) - 通过 Web Worker 异步处理 =============
@@ -191,7 +95,7 @@ const generateHeatmapViaWorker = () => {
       <div class="user-info-section">
         <div class="avatar-box">
           <div class="avatar-ring"></div>
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=牛" alt="Avatar" class="avatar-img" />
+          <img :src="userInfo.avatar" alt="Avatar" class="avatar-img" />
         </div>
 
         <div class="info-details">
@@ -207,10 +111,41 @@ const generateHeatmapViaWorker = () => {
         </div>
       </div>
 
-      <!-- ECharts 可视化能力雷达图 -->
-      <div class="skill-matrix-section">
-        <h3 class="section-title">核心战力雷达 // SKILL_MATRIX</h3>
-        <div class="echarts-container" ref="radarChartRef"></div>
+      <!-- 技术脉搏看板 (Bento Grid 替换雷达图) -->
+      <div class="technical-dashboard">
+        <div class="dashboard-grid">
+          <!-- 战力概览卡 -->
+          <div class="bento-card main-stat">
+            <h4 class="bento-title">综合战力 // TOTAL_POWER</h4>
+            <div class="power-display">
+              <span class="power-value">91</span>
+              <span class="power-unit">RANK.S</span>
+            </div>
+            <div class="power-progress-bg">
+              <div class="power-progress-fill" style="width: 91%"></div>
+            </div>
+          </div>
+
+          <!-- 核心能力列表 -->
+          <div class="bento-card skills-list">
+            <div v-for="m in geekMetrics" :key="m.label" class="metric-row">
+              <span class="metric-label">{{ m.label }}</span>
+              <div class="metric-bar">
+                <div class="metric-fill" :style="{ width: m.value + '%', backgroundColor: m.color }"></div>
+              </div>
+              <span class="metric-value">{{ m.value }}%</span>
+            </div>
+          </div>
+          
+          <!-- 工程化成熟度 (占据剩余空间) -->
+          <div class="bento-card mini-card engineering-stat">
+            <div class="mini-label">工程化成熟度 // INFRA_STABILITY</div>
+            <div class="mini-value">98.2%</div>
+            <div class="mini-progress-bg">
+              <div class="mini-progress-fill" style="width: 98.2%"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -265,63 +200,44 @@ const generateHeatmapViaWorker = () => {
           :class="{ 'is-active': activeTab === 'posts' }"
           @click="activeTab = 'posts'"
         >
-          发起的集结 ({{ myPosts.length }})
+          荣誉勋章 // HONORS ({{ honors.length }})
         </button>
         <button
           class="geek-tab"
           :class="{ 'is-active': activeTab === 'joined' }"
           @click="activeTab = 'joined'"
         >
-          我的编队 ({{ myJoined.length }})
+          成长内核 // GROWTH_KERNEL ({{ growthTracks.length }})
         </button>
       </div>
 
       <div class="tab-body">
         <transition name="list-fade" mode="out-in">
-          <!-- 发布的帖子 -->
-          <TransitionGroup
-            v-if="activeTab === 'posts'"
-            name="stagger-list"
-            tag="ul"
-            class="activity-list"
-            key="posts"
-          >
-            <li v-for="post in myPosts" :key="post.id" class="activity-item hover-effect">
-              <div class="item-left">
-                <div class="status-indicator" :class="post.status === '招募中' ? 'status-green' : 'status-gray'">
-                  <div class="ping" v-if="post.status === '招募中'"></div>
+          <!-- 勋章墙 -->
+          <div v-if="activeTab === 'posts'" class="honors-grid" key="honors">
+            <div v-for="honor in honors" :key="honor.id" class="honor-card">
+              <div class="honor-icon">{{ honor.icon }}</div>
+              <div class="honor-info">
+                <h4 class="honor-name">{{ honor.name }}</h4>
+                <p class="honor-desc">{{ honor.desc }}</p>
+              </div>
+              <div class="honor-level" :class="'level-' + honor.level">{{ honor.level }}</div>
+            </div>
+          </div>
+          
+          <!-- 成长时间轴 -->
+          <div v-else class="growth-timeline" key="growth">
+            <div v-for="track in growthTracks" :key="track.id" class="timeline-item">
+              <div class="timeline-marker"></div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <span class="timeline-stage">{{ track.stage }}</span>
+                  <span class="timeline-date">{{ track.date }}</span>
                 </div>
-                <span class="status-text">{{ post.status }}</span>
-                <span class="post-title">{{ post.title }}</span>
+                <p class="timeline-detail">{{ track.detail }}</p>
               </div>
-              <span class="item-date">{{ post.date }}</span>
-            </li>
-            <div v-if="myPosts.length === 0" class="empty-state" key="empty-post">
-              <div class="empty-icon"></div>
-              <p>暂无发起的组队信号</p>
             </div>
-          </TransitionGroup>
-
-          <!-- 参与的队伍 -->
-          <TransitionGroup
-            v-else
-            name="stagger-list"
-            tag="ul"
-            class="activity-list"
-            key="joined"
-          >
-            <li v-for="team in myJoined" :key="team.id" class="activity-item hover-effect">
-              <div class="item-left">
-                <span class="role-badge">{{ team.role }}</span>
-                <span class="post-title">{{ team.title }}</span>
-              </div>
-              <span class="item-date">{{ team.date }}</span>
-            </li>
-            <div v-if="myJoined.length === 0" class="empty-state" key="empty-join">
-               <div class="empty-icon"></div>
-               <p>您尚未加入任何阵列</p>
-            </div>
-          </TransitionGroup>
+          </div>
         </transition>
       </div>
     </div>
@@ -430,11 +346,15 @@ const generateHeatmapViaWorker = () => {
 }
 
 .user-name {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 800;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   color: var(--color-fg-default);
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
+  background: linear-gradient(to right, var(--color-fg-default), var(--color-fg-muted));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .user-role {
@@ -480,19 +400,159 @@ const generateHeatmapViaWorker = () => {
   color: var(--color-fg-subtle);
 }
 
-/* ECharts 雷达图容器 */
-.skill-matrix-section {
-  width: 100%;
-  flex: 1; /* 让雷达图占据剩余空间自适应 */
-  min-height: 250px;
-  display: flex;
-  flex-direction: column;
-}
-
-.echarts-container {
-  width: 100%;
+/* 技术脉搏看板 (Bento Grid) */
+.technical-dashboard {
   flex: 1;
   min-height: 220px;
+}
+
+.bento-card {
+  background: var(--color-canvas-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent-fg);
+  box-shadow: 0 12px 24px -10px var(--color-shadow);
+  background: var(--color-canvas-default);
+}
+
+.main-stat {
+  grid-area: main;
+  background: linear-gradient(135deg, rgba(9, 105, 218, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid rgba(9, 105, 218, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: 
+    "main skills"
+    "main infra";
+  gap: 16px;
+  height: 100%;
+}
+
+.skills-list { grid-area: skills; }
+.engineering-stat { 
+  grid-area: infra;
+  justify-content: space-between !important;
+}
+
+.bento-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+.power-display {
+  margin: 12px 0;
+}
+
+.power-value {
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--color-accent-fg);
+  font-family: 'Fira Code', monospace;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(9, 105, 218, 0.2);
+}
+
+.power-unit {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-fg-subtle);
+  margin-left: 8px;
+}
+
+.power-progress-bg {
+  height: 4px;
+  background: var(--color-border-muted);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.power-progress-fill {
+  height: 100%;
+  background: var(--color-accent-fg);
+  box-shadow: 0 0 10px var(--color-accent-fg);
+}
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.metric-row:last-child { margin-bottom: 0; }
+
+.metric-label { font-size: 12px; font-weight: 600; width: 60px; color: var(--color-fg-muted); }
+
+.metric-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border-muted);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease-out;
+}
+
+.metric-value {
+  font-size: 11px;
+  font-family: 'Fira Code', monospace;
+  color: var(--color-fg-subtle);
+  width: 30px;
+  text-align: right;
+}
+
+.mini-card {
+  padding: 16px;
+}
+
+.mini-label { 
+  font-size: 11px; 
+  font-weight: 700;
+  color: var(--color-fg-subtle);
+  letter-spacing: 1px;
+}
+.mini-value { 
+  font-size: 24px; 
+  font-weight: 800; 
+  color: var(--color-fg-default); 
+  font-family: 'Fira Code', monospace; 
+  margin: 8px 0;
+}
+
+.mini-progress-bg {
+  height: 2px;
+  background: var(--color-border-muted);
+  border-radius: 1px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: var(--color-success-fg);
+  box-shadow: 0 0 8px var(--color-success-fg);
 }
 
 /* 3D悬浮标签云 */
@@ -654,79 +714,130 @@ const generateHeatmapViaWorker = () => {
   transform: scaleX(1);
 }
 
-/* 动态列表 */
-.activity-list {
-  list-style: none;
-  padding: 0; margin: 0;
+/* 勋章墙 */
+.honors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
-.activity-item {
+.honor-card {
+  position: relative;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--color-canvas-subtle) 0%, transparent 100%);
+  border: 1px solid var(--color-border-default);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+.honor-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: var(--color-canvas-default);
+  border-color: var(--color-accent-fg);
+  box-shadow: 0 20px 40px -15px var(--color-shadow);
+}
+
+.honor-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: var(--color-accent-fg);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.honor-card:hover::before {
+  opacity: 1;
+}
+
+.honor-icon {
+  font-size: 32px;
+}
+
+.honor-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--color-fg-default);
+}
+
+.honor-desc {
+  font-size: 13px;
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+.honor-level {
+  position: absolute;
+  top: 10px; right: -25px;
+  transform: rotate(45deg);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 30px;
+  text-transform: uppercase;
+}
+.level-Gold { background: #fef9c3; color: #854d0e; }
+.level-Silver { background: #f1f5f9; color: #475569; }
+.level-Bronze { background: #ffedd5; color: #9a3412; }
+
+/* 成长时间轴 */
+.growth-timeline {
+  padding: 20px 0 20px 20px;
+  border-left: 2px dashed var(--color-border-muted);
+  margin-left: 10px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.timeline-item:last-child { margin-bottom: 0; }
+
+.timeline-marker {
+  position: absolute;
+  left: -27px;
+  top: 6px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent-fg);
+  border: 4px solid var(--color-canvas-default);
+  box-shadow: 0 0 10px var(--color-accent-fg);
+}
+
+.timeline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: var(--color-canvas-subtle);
-  border: 1px solid transparent;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  transition: all 0.2s;
+  margin-bottom: 8px;
 }
 
-.activity-item.hover-effect:hover {
-  background: var(--color-btn-hover-bg);
-  border-color: var(--color-border-default);
-  transform: translateX(4px);
+.timeline-stage {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-fg-default);
 }
 
-.item-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.timeline-date {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--color-accent-fg);
+  background: var(--color-accent-subtle);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
-.status-indicator {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-  width: 12px; height: 12px;
+.timeline-detail {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-fg-muted);
+  margin: 0;
 }
-.status-green { background: #22c55e; border-radius: 50%; }
-.status-green .ping {
-  position: absolute; width: 100%; height: 100%;
-  background: #22c55e; border-radius: 50%;
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-.status-gray { background: var(--color-border-default); width: 8px; height: 8px; border-radius: 50%; }
-
-@keyframes ping {
-  75%, 100% { transform: scale(2.5); opacity: 0; }
-}
-
-.status-text { font-size: 12px; font-weight: 600; color: var(--color-fg-muted); }
-.post-title { font-size: 15px; font-weight: 600; color: var(--color-fg-default); }
-
-.role-badge {
-  font-size: 11px; font-weight: 600; color: var(--color-accent-fg);
-  border: 1px solid rgba(9, 105, 218, 0.3);
-  background: rgba(9, 105, 218, 0.05);
-  padding: 2px 8px; border-radius: 12px;
-}
-[data-theme='dark'] .role-badge { border-color: rgba(47, 129, 247, 0.4); }
-
-.item-date { font-size: 13px; color: var(--color-fg-muted); font-family: 'Fira Code', monospace;}
-
-.empty-state {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 60px 0; color: var(--color-fg-subtle);
-}
-
-/* 列表进入/离开动画 */
-.list-fade-enter-active, .list-fade-leave-active { transition: opacity 0.3s; }
-.list-fade-enter-from, .list-fade-leave-to { opacity: 0; }
-
-.stagger-list-move, .stagger-list-enter-active, .stagger-list-leave-active { transition: all 0.4s ease; }
-.stagger-list-enter-from { opacity: 0; transform: translateX(-30px); }
-.stagger-list-leave-to { opacity: 0; transform: translateX(30px); }
-.stagger-list-leave-active { position: absolute; }
 
 
 /* 移动端适配 */

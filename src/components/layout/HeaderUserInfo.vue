@@ -170,7 +170,7 @@ const handleMouseLeave = () => {
     <!-- 个人头像和下拉菜单 -->
     <div class="avatar-container" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
       <div class="avatar-wrapper">
-        <img src="/src/assets/image/1.png" alt="头像" class="avatar" />
+        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Oliver&glassesProbability=100" alt="头像" class="avatar" />
       </div>
 
       <!-- 下拉菜单 -->
@@ -250,6 +250,7 @@ const handleMouseLeave = () => {
 .avatar-container {
   position: relative;
   padding: 4px;
+  z-index: 2000; /* 确保高于通知面板 */
 }
 
 .avatar-wrapper {
@@ -273,7 +274,7 @@ const handleMouseLeave = () => {
 
 .dropdown-menu {
   position: absolute;
-  top: 40px;
+  top: 38px; /* 向上移动 2px 增加 hover 覆盖面积，防止闪烁 */
   right: 0;
   background-color: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
@@ -281,7 +282,7 @@ const handleMouseLeave = () => {
   box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
   padding: 4px 0;
   min-width: 160px;
-  z-index: 1000;
+  z-index: 2100;
 }
 
 .dropdown-item {
