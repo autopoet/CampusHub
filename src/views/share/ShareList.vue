@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import FeedCard from '@/components/ui/FeedCard.vue'
 import SkeletonCard from '@/components/ui/SkeletonCard.vue'
@@ -219,7 +219,9 @@ onMounted(() => {
       }
     ]
     loading.value = false
-    setupObserver()
+    nextTick(() => {
+      setupObserver()
+    })
   }, 1000)
 })
 
@@ -234,7 +236,7 @@ const setupObserver = () => {
         loadMore()
       }
     },
-    { threshold: 0.1 }
+    { threshold: 0.1, rootMargin: '0px 0px 200px 0px' } // 提前 200 像素就开始加载
   )
   if (observerTarget.value) {
     observer.observe(observerTarget.value)
@@ -242,33 +244,77 @@ const setupObserver = () => {
 }
 
 const loadMore = () => {
+  if (isLoadingMore.value || !hasMore.value) return
+  
   isLoadingMore.value = true
-  // 模拟分页加载
+  
+  // 模拟网络加载
   setTimeout(() => {
+    const currentLen = list.value.length
     const moreData = [
       {
-        id: list.value.length + 200,
+        id: currentLen + 201,
         type: 'share',
-        author: '新来的研究员',
-        action: '分享了学习笔记',
-        title: `基于 Transformer 的序列推荐系统论文研读 (第${list.value.length / 8 + 1}期)`,
-        excerpt: '本周读了经典的 SASRec 论文。在此之前，基于马尔可夫链的模型是主流，但 SASRec 巧妙地借鉴了自然语言处理中的自注意力机制来捕捉用户的长期和短期兴趣。文章通俗易懂地梳理了公式推导。',
-        competition: '论文分享',
-        tags: ['推荐系统', 'Transformer', 'NLP'],
-        commentCount: 42,
+        author: '极客补给站',
+        action: '分享了新干货',
+        title: `深度学习：从零开始搭建你的第一个神经网络库 (第 ${Math.floor(currentLen / 4)} 讲)`,
+        excerpt: '在这篇文章中，我们将抛弃复杂的机器学习库，只用原生 Python 代码实现前向传播和反向传播。你会发现神经网络其实就是一堆简单的数学运算。学完后，你对 AI 的理解将上一个台阶。',
+        competition: '人工智能专栏',
+        tags: ['深度学习', 'Python', '零基础'],
+        commentCount: 15,
         updatedTime: '刚刚',
         isFavorite: false,
+      },
+      {
+        id: currentLen + 202,
+        type: 'share',
+        author: '西安前端爱好者',
+        action: '发布了技术选型',
+        title: '2026 年了，为什么我依然推荐你学习 Vue3 结合 Vite？',
+        excerpt: '面对眼花缭乱的前端框架，Vue3 依然是开发效率与性能的最佳平衡点。本文对比了 React 19 和 Vue3 的响应式差异，并分享了西电某大厂项目中的真实选型经验。',
+        competition: '前端架构',
+        tags: ['Vue3', 'Vite', '技术选型'],
+        commentCount: 88,
+        updatedTime: '刚刚',
+        isFavorite: false,
+      },
+      {
+        id: currentLen + 203,
+        type: 'share',
+        author: '算法修行者',
+        action: '分享了刷题总结',
+        title: 'LeetCode 周赛复盘：动态规划的三个核心套路',
+        excerpt: '周赛遇到了两个非常硬核的 DP 题。我总结了这三招：确定状态定义、写出转移方程、优化空间复杂度。掌握这三招，能解决 80% 的周赛难度题目。',
+        competition: '算法精进',
+        tags: ['算法', '动态规划', 'LeetCode'],
+        commentCount: 34,
+        updatedTime: '刚刚',
+        isFavorite: false,
+      },
+      {
+        id: currentLen + 204,
+        type: 'share',
+        author: '校园黑客客',
+        action: '发布了安全提醒',
+        title: '紧急！某校园网自动登录插件存在漏洞，请自查',
+        excerpt: '我由于好奇分析了下某个热门插件的源码，发现它明文存储了用户的学号和密码。如果你在使用类似的自动化工具，请务必更新到最新版，并更改密码。本文附带了简单的漏洞复现过程。',
+        competition: '安全预警',
+        tags: ['信息安全', '插件开发', '漏洞复现'],
+        commentCount: 201,
+        updatedTime: '刚刚',
+        isFavorite: true,
       }
     ]
+    
     list.value.push(...moreData)
     isLoadingMore.value = false
     
-    // 假设加载3页后就到底了
-    if (list.value.length >= 12) {
+    // 为了让你快速看到效果，我们把上限设为 19 条
+    if (list.value.length >= 19) {
       hasMore.value = false
       if (observer) observer.disconnect()
     }
-  }, 1200)
+  }, 1500)
 }
 
 const toggleFavorite = (item) => {
@@ -423,6 +469,11 @@ const sharePost = () => {
   align-items: center;
   color: var(--color-fg-muted);
   font-size: 14px;
+  border: 1px dashed var(--color-border-default); /* [调试用] 加上虚线框让你看清哨兵位置 */
+  margin: 20px 0;
+  border-radius: 12px;
+  min-height: 100px;
+  background: var(--color-canvas-subtle);
 }
 
 .loading-state {

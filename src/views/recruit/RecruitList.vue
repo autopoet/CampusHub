@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import FeedCard from '@/components/ui/FeedCard.vue'
 import SkeletonCard from '@/components/ui/SkeletonCard.vue'
@@ -234,7 +234,10 @@ onMounted(() => {
       }
     ]
     loading.value = false
-    setupObserver()
+    // 重要：等 Vue 把 v-else 里的 DOM 渲染出来，再去找那个哨兵
+    nextTick(() => {
+      setupObserver()
+    })
   }, 1000)
 })
 
@@ -249,7 +252,7 @@ const setupObserver = () => {
         loadMore()
       }
     },
-    { threshold: 0.1 }
+    { threshold: 0.1, rootMargin: '0px 0px 200px 0px' } // 提前 200 像素就开始加载，更丝滑
   )
   if (observerTarget.value) {
     observer.observe(observerTarget.value)
@@ -257,34 +260,82 @@ const setupObserver = () => {
 }
 
 const loadMore = () => {
+  if (isLoadingMore.value || !hasMore.value) return
+  
   isLoadingMore.value = true
-  // 模拟分页加载
+  
+  // 模拟网络加载，设置 1.5 秒延迟让你看清加载状态
   setTimeout(() => {
+    const currentLen = list.value.length
     const moreData = [
       {
-        id: list.value.length + 100,
+        id: currentLen + 101,
         type: 'recruit',
-        author: '新来的极客',
-        action: '发布了寻人启事',
-        title: `基于 Vue3+Rust 的跨平台桌面应用开发 (第${list.value.length / 8 + 1}批)`,
-        excerpt: '我用 Tauri + Vue3 写了一个很炫酷的界面，但是由于没有系统地学过 Rust，现在遇到了内存泄漏和线程通信的瓶颈。急需一名熟悉 Rust 的后端/底层老哥加入，咱们一起把这套开源生态做大做强！',
-        competition: '开源项目',
-        requiredSkills: ['Rust', 'Tauri', 'C++'],
+        author: '极客补给站',
+        action: '发布了新动态',
+        title: `全栈开发：模拟面试系统 (深度迭代第 ${Math.floor(currentLen / 4)} 阶段)`,
+        excerpt: '本项目旨在利用 AI 模拟大厂面试官进行真人对练。目前前端部分已完成 80%，急需一名熟悉后端 RAG 架构或者有大模型微调经验的同学加入。项目已获得校赛直通名额，诚邀硬核队友！',
+        competition: '互联网+',
+        requiredSkills: ['Python', 'LangChain', 'OpenAI'],
+        status: '招募中',
+        updatedTime: '刚刚',
+        isFavorite: false,
+        commentCount: 0,
+      },
+      {
+        id: currentLen + 102,
+        type: 'recruit',
+        author: '代码守望者',
+        action: '发起组队',
+        title: '针对养老场景的智能助餐系统，寻找嵌入式硬件合作伙伴',
+        excerpt: '这是一个结合了物联网与边缘计算的公益项目。我们需要设计一套智能识别菜品并自动计算热量的硬件终端。如果你对树莓派、传感器集成有浓厚兴趣，欢迎加入我们的“夕阳红”科技小队。',
+        competition: '挑战杯',
+        requiredSkills: ['树莓派', 'C++', '视觉算法'],
+        status: '招募中',
+        updatedTime: '刚刚',
+        isFavorite: false,
+        commentCount: 2,
+      },
+      {
+        id: currentLen + 103,
+        type: 'recruit',
+        author: 'UI 魔法师',
+        action: '寻找队友',
+        title: '想要复刻一个极简风格的“Notion”替代品，求一名前端大佬',
+        excerpt: '我已经完成了全部的交互原型设计，主打本地优先和加密存储。现在需要一位对 TipTap 或 Prosemirror 这种富文本引擎有研究的前端同学一起合作开发。',
+        competition: '独立开发',
+        requiredSkills: ['TipTap', 'Prosemirror', 'Vue3'],
         status: '招募中',
         updatedTime: '刚刚',
         isFavorite: false,
         commentCount: 5,
+      },
+      {
+        id: currentLen + 104,
+        type: 'recruit',
+        author: '三秦赛客',
+        action: '发起招募',
+        title: '陕西省大学生程序设计竞赛（ACM-ICPC省赛）组队，求金牌大腿',
+        excerpt: '我目前刷题量 500+，擅长动态规划和字符串。现在队伍还差一个擅长图论或数论的暴力选手。咱们西安本地训练，管饭！',
+        competition: 'ACM省赛',
+        requiredSkills: ['算法', '图论', 'C++'],
+        status: '招募中',
+        updatedTime: '刚刚',
+        isFavorite: false,
+        commentCount: 12,
       }
     ]
+    
     list.value.push(...moreData)
     isLoadingMore.value = false
     
-    // 假设加载3页后就到底了
-    if (list.value.length >= 11) {
+    // 为了让你快速看到效果，我们把上限设为 19 条
+    // （15条初始 + 4条新加载 = 19条，加载一次就到底）
+    if (list.value.length >= 19) {
       hasMore.value = false
       if (observer) observer.disconnect()
     }
-  }, 1200)
+  }, 1500)
 }
 
 const toggleFavorite = (item) => {
@@ -455,6 +506,11 @@ const sharePost = () => {
   align-items: center;
   color: var(--color-fg-muted);
   font-size: 14px;
+  border: 1px dashed var(--color-border-default); /* [调试用] 加上虚线框让你看清哨兵位置 */
+  margin: 20px 0;
+  border-radius: 12px;
+  min-height: 100px; /* 给它一个明显的高度，确保哨兵一定能被浏览器看见 */
+  background: var(--color-canvas-subtle);
 }
 
 .loading-state {
