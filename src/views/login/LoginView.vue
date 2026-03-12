@@ -13,6 +13,10 @@ const form = reactive({
 const router = useRouter()
 
 const onSubmit = () => {
+  if (!form.name || !form.password) {
+    alert('请填写学号和密码！')
+    return
+  }
   console.log('登录成功')
   router.push('/home/index/recruit')
 }
