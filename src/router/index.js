@@ -42,7 +42,7 @@ const router = createRouter({
           component: () => import('../views/explore/CompetitionCalendar.vue'),
         },
         {
-          path: 'detail/:id',
+          path: 'detail/:type/:id',
           name: 'detail',
           component: () => import('../views/detail/PostDetail.vue'),
         },

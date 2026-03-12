@@ -12,8 +12,8 @@ const hasMore = ref(true)
 const observerTarget = ref(null)
 let observer = null
 
-const goToDetail = (id) => {
-  router.push(`/home/detail/${id}`)
+const goToDetail = (item) => {
+  router.push(`/home/detail/${item.type}/${item.id}`)
 }
 
 const list = ref([])
@@ -345,7 +345,7 @@ const sharePost = () => {
           :author="item.author"
           :action="item.action"
           :time="item.updatedTime"
-          @click="goToDetail(item.id)"
+          @click="goToDetail(item)"
         >
           <template #title>
             <h2 class="feed-title">{{ item.title }}</h2>

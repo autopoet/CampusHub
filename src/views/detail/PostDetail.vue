@@ -5,8 +5,9 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
-// 获取路由中的 ID
+// 获取路由中的 ID 和 类型
 const postId = computed(() => route.params.id)
+const postType = computed(() => route.params.type)
 
 // 返回上一页
 const goBack = () => {
@@ -15,50 +16,80 @@ const goBack = () => {
 
 // ============== 模拟数据 ==============
 const mockDb = reactive({
-  '1': {
+  'recruit_1': {
     type: 'recruit',
     title: '蓝桥杯 Web 应用开发国赛组队，缺一后端！',
     author: '前端小牛',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=牛',
     updatedTime: '2 小时前',
+    status: '招募中',
     isFavorite: false,
     content: `
       <p>目前我们队伍有一个前端和一个UI，准备报名今年的蓝桥杯Web赛道。前端技术栈是Vue3+Pinia，UI用Figma。</p>
       <h3>我们需要的队友</h3>
       <p>现在急需一名熟悉 Node.js 或者 Java SpringBoot 的后端大佬加入。</p>
       <h3>时间与要求</h3>
-      <p>比赛期间一周最好能抽出10小时一起交流，如果有微服务经验或者搞过大屏可视化优先。希望你能负责后端的接口开发、数据库设计以及最后的服务器部署。</p>
-      <pre><code>// 示例代码栈要求
-const stack = ['Node.js', 'Express/Koa', 'MySQL/MongoDB', 'Redis'];
-if (stack.every(tech => user.knows(tech))) {
-  joinOurTeam();
-}</code></pre>
+      <p>比赛期间一周最好能抽出10小时一起交流，如果有微服务经验或者搞过大屏可视化优先。</p>
     `,
     tags: ['Web开发', '蓝桥杯', '寻找后端'],
     views: 1256,
     commentCount: 8
   },
-  '3': {
+  'share_2': {
+    type: 'share',
+    title: 'Vue3 性能调优指南：从 500ms 到 50ms 的极致首屏加载',
+    author: '前端架构师阿飞',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=阿飞',
+    updatedTime: '昨天 19:20',
+    isFavorite: true,
+    content: `
+      <p>在这篇文章中，我们将深入探讨 Vue3 渲染引擎背后的机制，了解什么是 Block Tree 以及如何利用 keep-alive 和异步组件切割代码体积。</p>
+      <h3>性能瓶颈排查</h3>
+      <p>我将结合大厂的真实落地案例，一步步带你排查性能瓶颈。附送自动化检测脚本。</p>
+    `,
+    tags: ['Vue3', '性能优化', '前端架构'],
+    views: 342,
+    commentCount: 42
+  },
+  'recruit_3': {
     type: 'recruit',
     title: '大创国家级立项，做校园闲置物品流转系统，求移动端开发人员',
     author: '极客实验室',
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=极客',
     updatedTime: '昨天',
+    status: '招募中',
     isFavorite: true,
     content: `
       <p>我们的大创项目已经成功拿到国家级立项，目前预算充足。系统主要做校园内的二手闲置流转，结合智能推荐算法。后端基础搭建已完成。</p>
       <h3>招募方向：大前端</h3>
-      <p>现求一两名熟悉 Uni-app 或 鸿蒙系统开发的同学，一起将系统落地。如果有原生安卓/iOS经验也可以。</p>
-      <p>团队氛围极好，大四学长带队，有机会直接指导你的毕业设计。项目结束有丰厚的奖金分成！</p>
+      <p>现求一两名熟悉 Uni-app 或 鸿蒙系统开发的同学，一起将系统落地。</p>
     `,
     tags: ['大创', '资金充裕', 'APP开发'],
     views: 342,
     commentCount: 23
+  },
+  'recruit_5': {
+    type: 'recruit',
+    title: '想做一个极致优雅的番茄钟 App，我已经画好了图，就差程序员了',
+    author: '野生设计师',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=设计',
+    updatedTime: '3 天前',
+    status: '已满员',
+    isFavorite: false,
+    content: `
+      <p>发现市面上的番茄钟都太丑了，或者广告太多。我自己用 Figma 构思了一套玻璃拟物化风格（Glassmorphism）的 UI 界面。</p>
+      <h3>项目现状</h3>
+      <p>目前 UI 设计已全部完成，导出图稿已就绪。正在寻找 iOS 独立开发的老哥合作共同打造一款出圈的产品。</p>
+    `,
+    tags: ['SwiftUI', 'Figma', '独立开发'],
+    views: 108,
+    commentCount: 15
   }
 })
 
 const detailData = computed(() => {
-  return mockDb[postId.value] || { 
+  const key = `${postType.value}_${postId.value}`
+  return mockDb[key] || { 
     title: '未找到内容', 
     content: '<p>这篇帖子已经被吸入赛博黑洞...</p>', 
     author: 'System', 
@@ -127,7 +158,7 @@ const unlockBodyScroll = () => {
 }
 
 onMounted(() => {
-  const savedStatus = localStorage.getItem(`apply_status_post_${postId.value}`)
+  const savedStatus = localStorage.getItem(`apply_status_post_${postType.value}_${postId.value}`)
   if (savedStatus) {
     applyStatus.value = savedStatus
   }
@@ -142,7 +173,7 @@ const openApplyModal = () => {
   advantageText.value = ''
   errorMessage.value = ''
   showApplyModal.value = true
-  lockBodyScroll() // 修复杂乱的遮住问题
+  lockBodyScroll()
 }
 
 const closeApplyModal = () => {
@@ -156,7 +187,7 @@ const submitApplication = () => {
     return
   }
   applyStatus.value = 'reviewing'
-  localStorage.setItem(`apply_status_post_${postId.value}`, 'reviewing')
+  localStorage.setItem(`apply_status_post_${postType.value}_${postId.value}`, 'reviewing')
   closeApplyModal()
 }
 </script>
@@ -226,18 +257,18 @@ const submitApplication = () => {
 
           <!-- 行动召唤卡片 -->
           <div class="action-card" v-if="detailData.type === 'recruit'">
-             <div class="pulse-status" :class="applyStatus">
+             <div class="pulse-status" :class="[applyStatus, { 'is-full': detailData.status === '已满员' }]">
                 <span class="pulse-dot"></span>
-                {{ applyStatus === 'none' ? '组队通道开启中' : applyStatus === 'reviewing' ? '简历正在审核中' : '您已成功入队' }}
+                {{ detailData.status === '已满员' ? '招募已结束' : (applyStatus === 'none' ? '组队通道开启中' : applyStatus === 'reviewing' ? '简历正在审核中' : '您已成功入队') }}
              </div>
              
              <button 
                 class="gh-btn-primary full-width huge-btn" 
-                :class="{'btn-disabled': applyStatus !== 'none'}"
+                :class="{'btn-disabled': applyStatus !== 'none' || detailData.status === '已满员'}"
                 @click="openApplyModal"
-                :disabled="applyStatus !== 'none'"
+                :disabled="applyStatus !== 'none' || detailData.status === '已满员'"
               >
-                {{ applyStatus === 'none' ? '立刻申请入队' : applyStatus === 'reviewing' ? '等待对方回复...' : '组队成功' }}
+                {{ detailData.status === '已满员' ? '人员已满' : (applyStatus === 'none' ? '立刻申请入队' : applyStatus === 'reviewing' ? '等待对方回复...' : '组队成功') }}
               </button>
           </div>
 
@@ -518,6 +549,7 @@ const submitApplication = () => {
 .pulse-status.none .pulse-dot { background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: pulse 2s infinite; }
 .pulse-status.reviewing .pulse-dot { background: #f59e0b; }
 .pulse-status.approved .pulse-dot { background: var(--color-accent-fg); }
+.pulse-status.is-full .pulse-dot { background: var(--color-fg-subtle); animation: none; }
 
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; }
 
