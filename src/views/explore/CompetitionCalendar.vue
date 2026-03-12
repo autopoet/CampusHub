@@ -45,7 +45,7 @@ const rawCompetitions = [
   {
     id: 4,
     name: "微信小程序应用开发赛",
-    level: "省市级",
+    level: "省级",
     levelColor: "#10b981",
     deadline: "2026-03-01",
     desc: "由腾讯微信团队与清华大学联合主办，鼓励基于微信生态开发创新性的小程序，包括云开发、小游戏等。获奖者直接对接微信实习通道。",
@@ -65,6 +65,210 @@ const rawCompetitions = [
     reward: "¥30,000",
     teamSize: "1-3人",
     organizer: "华为技术有限公司"
+  },
+  {
+    id: 6,
+    name: "陕西省第七届大学生创新创业大赛",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-04-20",
+    desc: "陕西省教育厅主办的高水平赛事，旨在挖掘三秦大地的创新之星。重点扶持具有陕西特色的硬科技项目过程转化。",
+    tags: ["创新中心", "三秦特色", "省级政府奖"],
+    reward: "省级扶持金",
+    teamSize: "3-8人",
+    organizer: "陕西省教育厅"
+  },
+  {
+    id: 7,
+    name: "西安高校极客马拉松 (Xian Hackathon)",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-03-15",
+    desc: "汇聚西安交大、西工大等名校极客。48小时不间断开发，挑战西安智慧城市建设痛点。",
+    tags: ["黑客松", "城市建设", "西安名校"],
+    reward: "¥5,000 + 创业入驻",
+    teamSize: "3-5人",
+    organizer: "西安高新区管委会"
+  },
+  {
+    id: 8,
+    name: "第十二届“互联网+”大学生创新创业大赛陕西赛区",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-06-15",
+    desc: "互联网+国赛的省级预选赛。陕西作为教育大省，省赛竞争异常激烈。涉及高教主赛道、红旅赛道等。",
+    tags: ["红旅", "高教主赛道", "省级金选"],
+    reward: "直通国赛资格",
+    teamSize: "3-15人",
+    organizer: "中共陕西省委教育工委"
+  },
+  {
+    id: 9,
+    name: "ACM-ICPC 亚洲区域赛 (西安站)",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-10-15",
+    desc: "全球影响力最大的算法竞赛。西安作为传统强点，汇集了全国最顶尖的算法人才。代码硬实力的终极对决。",
+    tags: ["纯算法", "国际水准", "顶级荣誉"],
+    reward: "国际总决赛名额",
+    teamSize: "3人固定",
+    organizer: "ICPC 委员会"
+  },
+  {
+    id: 10,
+    name: "RoboMaster 机甲大师高校联盟赛 (西北赛区)",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-04-05",
+    desc: "专为机器人爱好者打造。西北赛区常年在此举办，涵盖步兵、英雄、空中等多种兵种的对抗。需要极强的硬件与嵌入式底座。",
+    tags: ["机器人", "嵌入式", "团队协作"],
+    reward: "大疆实习直通",
+    teamSize: "10-20人",
+    organizer: "DJI 大疆创新"
+  },
+  {
+    id: 11,
+    name: "“秦创原”杯大学生人工智能应用大赛",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-05-25",
+    desc: "依托秦创原创新驱动平台，征集能够落地陕西产业链的人工智能方案。包含图像识别、语义分析等方向。",
+    tags: ["AI落地", "秦创原", "产业链集成"],
+    reward: "孵化基金 5w",
+    teamSize: "2-5人",
+    organizer: "秦创原创新促进中心"
+  },
+  {
+    id: 12,
+    name: "百度之星程序设计大赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-08-01",
+    desc: "百度举办的经典算法赛事，素有“程序设计界之星”的美誉。题目灵活，侧重于思维能力和极致性能优化。",
+    tags: ["百度云", "搜索算法", "码农摇篮"],
+    reward: "百度入职面试绿卡",
+    teamSize: "个人赛",
+    organizer: "百度"
+  },
+  {
+    id: 13,
+    name: "阿里巴巴全球数学竞赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-04-01",
+    desc: "不设门槛，纯粹对数学热爱的全球性赛事。题目由全球顶级数学家命制，挑战人类智力极限。",
+    tags: ["数学", "全球互联", "智力游戏"],
+    reward: "总奖金 $100万",
+    teamSize: "个人赛",
+    organizer: "阿里巴巴达摩院"
+  },
+  {
+    id: 14,
+    name: "陕西省大学生网络安全特攻赛 (CTF)",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-03-25",
+    desc: "陕西高校网安实操能力大比武。涵盖Web安全、逆向工程、密码学等。旨在培养陕西本土的安全后备队伍。",
+    tags: ["攻防演练", "信息安全", "三秦安全"],
+    reward: "网安公司特招",
+    teamSize: "4人",
+    organizer: "陕西省网信办"
+  },
+  {
+    id: 15,
+    name: "Google 引领移动应用开发大赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-07-20",
+    desc: "基于 Android/Flutter 平台，探索移动互联的新边界。特别关注无障碍设计和可持续发展主题。",
+    tags: ["Android", "Flutter", "全球眼光"],
+    reward: "谷歌开发者峰会入场券",
+    teamSize: "1-3人",
+    organizer: "Google"
+  },
+  {
+    id: 16,
+    name: "字节跳动字节跳动 ByteCamp 夏令营挑战赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-03-30",
+    desc: "顶尖选手的嘉年华。通过在线初赛筛选，进入总部的 ByteCamp 进行封闭式开发挑战。直接锁定三方协议。",
+    tags: ["短视频算法", "高并发架构", "提前录用"],
+    reward: "SP/SSP Offer",
+    teamSize: "个人筛选",
+    organizer: "字节跳动人力资源部"
+  },
+  {
+    id: 17,
+    name: "陕西省电子设计竞赛 (TI杯)",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-08-15",
+    desc: "陕西物理/电子类老牌赛事。在西电、西交等校极具影响力。考验电路设计、单片机编程和现场焊接调试功底。",
+    tags: ["硬件电路", "单片机", "实操王者"],
+    reward: "TI 提供的高级套件",
+    teamSize: "3人",
+    organizer: "德州仪器 TI"
+  },
+  {
+    id: 18,
+    name: "美团“骑手轨迹”大数据挑战赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-05-05",
+    desc: "利用美团提供的海量脱敏轨迹数据，优化配送算法。是研究运筹优化、路径规划的绝佳实战场。",
+    tags: ["大数据", "路径规划", "实战算法"],
+    reward: "首席科学家亲笔推荐信",
+    teamSize: "1-3人",
+    organizer: "美团技术团队"
+  },
+  {
+    id: 19,
+    name: "陕西省大学生数学建模竞赛",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-09-10",
+    desc: "国赛的省级预选和分赛区评选。陕西赛区规模庞大，阅卷标准极高，是通往国一的必经之路。",
+    tags: ["建模分析", "论文写作", "MATLAB"],
+    reward: "省赛证书",
+    teamSize: "3人",
+    organizer: "中国工业与应用数学学会"
+  },
+  {
+    id: 20,
+    name: "网易雷火游戏开发大赛",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-11-20",
+    desc: "针对游戏客户端、服务器引擎开发。雷火工作室直接命题，题目涉及图形学渲染、物理引擎优化等。游戏人的梦想起点。",
+    tags: ["游戏引擎", "图形学", "雷火之星"],
+    reward: "¥50,000",
+    teamSize: "2人",
+    organizer: "网易游戏雷火工作室"
+  },
+  {
+    id: 21,
+    name: "“西咸新区”开源软件挑战赛",
+    level: "省级",
+    levelColor: "#10b981",
+    deadline: "2026-04-30",
+    desc: "鼓励陕西学子参与开源。针对 OpenHarmony、Euler 等国产开源生态提交代码贡献补丁。为开源精神喝彩。",
+    tags: ["开源贡献", "国产OS", "GitHub达人"],
+    reward: "开源勋章 + 奖励金",
+    teamSize: "1-3人",
+    organizer: "西咸新区开发建设部"
+  },
+  {
+    id: 22,
+    name: "Apple Swift Student Challenge",
+    level: "国家级",
+    levelColor: "#3b82f6",
+    deadline: "2026-02-28",
+    desc: "苹果官方举办的全球学生开发者挑战赛。提交一个具有创意的 Swift Playgrounds 项目。获奖者将获得 AirPods Pro 和精美纪念品。",
+    tags: ["iOS开发", "Swift", "苹果全家桶"],
+    reward: "WWDC 门票 (部分)",
+    teamSize: "个人赛",
+    organizer: "Apple Inc."
   }
 ]
 
@@ -591,6 +795,7 @@ const goToRecruit = () => {
   margin-bottom: 16px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
