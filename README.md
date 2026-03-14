@@ -57,7 +57,5 @@ pnpm dev
 ```
 
 <p align="center">
-  <img src="/me.jpg" width="60" height="60" style="border-radius: 50%; border: 2px solid var(--color-accent-fg); padding: 2px;" alt="Author Avatar" /><br/>
-  <strong>Crafted with ❤️ by You</strong><br/>
   保持热爱，持续进化。
 </p>
