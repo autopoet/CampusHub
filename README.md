@@ -56,14 +56,6 @@ pnpm install
 pnpm dev
 ```
 
----
-
-## GitHub About 简介 (可以直接复制)
-
-> CampusHub: A high-performance, geek-style competition team-building & sharing platform for university students. Built with Vue 3.5, Vite 6, and Bento design. Powered by Web Workers for 60FPS seamless data visualization.
-
----
-
 <p align="center">
   <img src="/me.jpg" width="60" height="60" style="border-radius: 50%; border: 2px solid var(--color-accent-fg); padding: 2px;" alt="Author Avatar" /><br/>
   <strong>Crafted with ❤️ by You</strong><br/>
