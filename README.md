@@ -2,21 +2,21 @@
   <img src="./src/assets/logo.svg" width="128" height="128" alt="CampusHub Logo" />
 </p>
 
-<h1 align="center">校赛通 — 高校开发者竞赛组队与协作平台</h1>
+<h1 align="center">CampusHub 竞赛组队平台</h1>
 
 <p align="center">
-  <strong>高校竞赛组队与经验分享交流平台</strong>
+  <strong>基于 Vue 3 构建的竞赛组队与协作平台</strong>
 </p>
 
 <p align="center">
   <a href="https://vuejs.org/">
-    <img src="https://img.shields.io/badge/Vue-3.5+-42b883?style=for-the-badge&logo=vue.js" alt="Vue 3" />
+    <img src="https://img.shields.io/badge/Vue-3.x-42b883?style=flat-square&logo=vue.js" alt="Vue 3" />
   </a>
   <a href="https://vitejs.dev/">
-    <img src="https://img.shields.io/badge/Vite-6.x-646cff?style=for-the-badge&logo=vite" alt="Vite" />
+    <img src="https://img.shields.io/badge/Vite-6.x-646cff?style=flat-square&logo=vite" alt="Vite" />
   </a>
   <a href="https://pinia.vuejs.org/">
-    <img src="https://img.shields.io/badge/Pinia-Latest-ffe467?style=for-the-badge&logo=pinia" alt="Pinia" />
+    <img src="https://img.shields.io/badge/Pinia-Latest-ffe467?style=flat-square&logo=pinia" alt="Pinia" />
   </a>
 </p>
 
@@ -28,63 +28,60 @@
 
 CampusHub 旨在建立一个去中心化的技术爱好者集结地。通过数字化的实力展示与透明的组队机制，它打破了传统贴吧、群聊等低效的信息分发模式。我希望通过这个平台，让每一次竞赛组队不再是低效率的“随机抽样”，而是基于技术深度与互补性的精准碰撞。
 
-在这个项目的开发过程中，我尝试将学习到的 Vue3 新特性应用到实际场景中，并针对一些开发中遇到的问题尝试了不同的解决方案：
+## 核心技术亮点
 
-### 1. 自研 Bento 布局替代三方库
+本项目包含动态看板与热力图模块，针对前端海量数据下的渲染帧率与 SPA 路由状态同步进行了专项性能调优与实践。
 
-初期曾考虑使用 ECharts 实现能力展示，但发现三方库的样式自定义成本较高，且会增加包体积。最终决定利用原生 **CSS Grid** 实现一套 **Bento Layout (便当盒布局)**，在保持页面轻量化的同时，实现了更自由的定制化效果。
+### 1. 基于 Web Worker 的长任务分离优化
+针对大规模热力图数据解析引发的主线程阻塞（Long Task）痛点，引入 `Web Worker` 构建异步计算层，将密集型计算任务从渲染主线程中剥离。结合 Event Loop 机制实施异步分发，有效解决了页面卡顿问题，保障了 UI 层交互帧率的高效稳定。
 
-### 2. 性能优化：Web Worker 异步计算
+### 2. 基于 GPU 加速的轻量级布局实践
+弃用繁冗的第三方 UI 库，利用原生 `CSS Grid` 范式手写实现自适应瀑布流布局，显著降低了包体积负担。在玻璃拟态动效中严格约束 `transform` 与 `opacity` 的使用以建立 **GPU 合成层 (Composite Layer)**，从底层规避了大量的重排（Reflow）与重绘（Repaint）。
 
-生成一整年的热力图数据比较耗时，直接在主线程跑会导致页面卡顿。我引入了 **Web Worker** 把这部分逻辑分流到后台处理，保证了 UI 操作的流畅。
+### 3. 基于路由与状态机的 SPA 数据隔离拦截
+针对单页应用中高频发生的动态路由实例**就地复用（Patch）**导致的状态污染漏洞，联动 **Vue Router 全局守卫** 与 **Pinia** 响应式缓存池进行强制状态重置。通过设计模块 ID 隔离映射策略，从路由级别斩断了跨页面切换时的数据碰撞隐患。
 
-### 3. 主题系统：原生 CSS 变量
+## 技术栈
 
-没有用复杂的方案，直接基于 CSS 变量（Variables）构建主题颜色。配合 `prefers-color-scheme` 实现了自动切换，并微调了深色模式下的半透明视觉层级。
-
-### 4. 状态管理从 Props 到 Pinia
-
-随着项目规模扩大，多层级的组件通信导致维护成本大幅上升。通过引入 **Pinia** 统一管理用户信息和全局通知状态，规范了数据流向，解决了跨页面状态同步的问题。
-
-## 我的技术清单
-
-* **框架**: Vue 3.5 (Composition API)
-* **状态管理**: Pinia (全局状态流)
-* **性能**: Web Workers API (异步计算)
-* **构建**: Vite 6.0 + pnpm
-* **动效**: CSS View Transitions / Transition Group
-* **视觉**: 模块化组件设计 + CSS 变量驱动
+* **核心框架**: Vue 3.5 (Composition API)
+* **构建工具**: Vite 6.0 + pnpm
+* **状态管理**: Pinia (全链路状态流转)
+* **性能方案**: Web Workers API + GPU 硬件加速
+* **响应式布局**: CSS Grid + CSS Variables
 
 ## 项目结构
 
 ```bash
 ├── src/
 │   ├── api/            # 接口请求封装
-│   ├── assets/         # 静态资源、Logo 与样式变量
-│   ├── components/     # 核心组件
-│   ├── layouts/        # 布局模式
-│   ├── stores/         # 状态管理
-│   ├── views/          # 业务页面
-│   └── workers/        # 异步计算 Worker
-├── public/             # 公共资源
-└── package.json        # 项目配置
+│   ├── assets/         # 静态资源与样式变量
+│   ├── components/     # 核心 UI 组件
+│   ├── layouts/        # 容器布局
+│   ├── stores/         # Pinia 状态管理
+│   ├── views/          # 业务逻辑页面
+│   └── workers/        # 异步计算 Worker 逻辑
+├── public/             # 静态公共资源
+└── package.json        # 项目依赖配置
 ```
 
-## 如何运行
+## 快速开始
 
 ```bash
-# 获取代码
+# 1. 获取代码
 git clone https://github.com/autopoet/campushub.git
 
-# 安装依赖
+# 2. 安装依赖
 pnpm install
 
-# 启动项目
+# 3. 本地开发预览
 pnpm dev
+
+# 4. 生产环境构建
+pnpm build
 ```
 
 ---
 
 <p align="center">
-CampusHub - 2026
+  期待与每一个优秀的你在代码的世界相遇。
 </p>
