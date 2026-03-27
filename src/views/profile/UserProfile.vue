@@ -44,10 +44,13 @@ const geekMetrics = computed(() => [
 
 // ============= 成长历程 =============
 const honors = ref([
-  { id: 1, name: 'Vditor Master', icon: '📝', desc: '掌握 Markdown 深度集成', level: 'Gold' },
-  { id: 2, name: 'ECharts Artist', icon: '📊', desc: '解锁雷达图可视化技能', level: 'Silver' },
-  { id: 3, name: 'Worker Pioneer', icon: '⚙️', desc: '精通 Web Worker 多线程', level: 'Bronze' },
-  { id: 4, name: 'Glass Architect', icon: '✨', desc: '深刻理解玻璃拟物渲染', level: 'Silver' }
+  { id: 1, name: 'Vditor Master', icon: '📝', desc: '掌握 Markdown 深度集成，能够在 Vue3 组件中优雅嵌入所见即所得编辑器，并对大量 Markdown 内容的渲染性能进行专项调优，最终实现了极低延迟的富文本呈现体验。', level: 'Gold' },
+  { id: 2, name: 'ECharts Artist', icon: '📊', desc: '解锁雷达图可视化技能。', level: 'Silver' },
+  { id: 3, name: 'Worker Pioneer', icon: '⚙️', desc: '精通 Web Worker 多线程，将主线程频繁发生的密集型计算任务系统性地剥离至独立 Worker 线程，结合 Event Loop 的宏任务调度机制，有效消除了长任务对 UI 交互造成的帧率阻塞，保障了在海量数据场景下页面依然保持 60fps 的丝滑响应。', level: 'Gold' },
+  { id: 4, name: 'Glass Architect', icon: '✨', desc: '深刻理解玻璃拟物渲染，严格约束 transform 与 opacity 属性以建立 GPU 合成层，从底层规避大量重排与重绘。', level: 'Silver' },
+  { id: 5, name: 'Router Guardian', icon: '🔒', desc: '攻克了 SPA 中动态路由就地复用引发的状态污染漏洞。', level: 'Bronze' },
+  { id: 6, name: 'Grid Weaver', icon: '🕸️', desc: '利用原生 CSS Grid 范式手写实现自适应响应式布局，显著降低了对第三方 UI 库的依赖和包体积负担。基于 column-count 进行了零 JS 损耗的瀑布流排版实践，彻底抛弃了过去使用 Masonry.js 频繁读写 DOM 导致的性能黑洞，让布局计算完全在浏览器的渲染引擎内完成。', level: 'Gold' },
+  { id: 7, name: 'API Conductor', icon: '🎼', desc: '深入理解 RESTful 接口设计规范，并在复杂的并发请求场景下运用 AbortController 进行竞态请求拦截。', level: 'Bronze' },
 ])
 
 const growthTracks = ref([
@@ -714,11 +717,24 @@ const generateHeatmapViaWorker = () => {
   transform: scaleX(1);
 }
 
-/* 勋章墙 */
+/* 勋章墙 - 真实瀑布流实现 */
+/*
+ * 核心技术：column-count 多列布局
+ * 原理：浏览器将容器分为 N 列，子元素依次从上到下填充最短的列
+ * 优势：纯 CSS，零 JS，彻底不触碰 DOM，完全在渲染引擎里完成计算
+ * 与 Grid 区别：Grid 会强制对齐行高（整齐），column-count 允许每列独立伸缩（错落有致）
+ */
 .honors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  column-count: 3;       /* 桌面端：3列 */
+  column-gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .honors-grid { column-count: 2; } /* 中等屏幕：2列 */
+}
+
+@media (max-width: 540px) {
+  .honors-grid { column-count: 1; } /* 移动端：1列 */
 }
 
 .honor-card {
@@ -728,10 +744,14 @@ const generateHeatmapViaWorker = () => {
   border: 1px solid var(--color-border-default);
   border-radius: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* 改为顶对齐，让高度自然由内容撑开 */
   gap: 20px;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
   overflow: hidden;
+  /* 【关键属性！】防止单张卡片在列与列之间被截断（断成两半），必须加！ */
+  break-inside: avoid;
+  /* 用 margin-bottom 代替 gap，column-count 布局不支持 gap 作用于行 */
+  margin-bottom: 20px;
 }
 
 .honor-card:hover {
