@@ -44,10 +44,30 @@ const geekMetrics = computed(() => [
 
 // ============= 成长历程 =============
 const honors = ref([
-  { id: 1, name: 'Vditor Master', icon: '📝', desc: '掌握 Markdown 深度集成', level: 'Gold' },
-  { id: 2, name: 'ECharts Artist', icon: '📊', desc: '解锁雷达图可视化技能', level: 'Silver' },
-  { id: 3, name: 'Worker Pioneer', icon: '⚙️', desc: '精通 Web Worker 多线程', level: 'Bronze' },
-  { id: 4, name: 'Glass Architect', icon: '✨', desc: '深刻理解玻璃拟物渲染', level: 'Silver' }
+  {
+    id: 1, name: 'Vditor Master', icon: '📝', level: 'Gold',
+    desc: '掌握 Markdown 深度集成，在 Vue3 组件中优雅嵌入所见即所得编辑器，并对大量 Markdown 内容的渲染性能进行专项调优，最终实现了极低延迟的富文本呈现体验。'
+  },
+  {
+    id: 2, name: 'ECharts Artist', icon: '📊', level: 'Silver',
+    desc: '解锁雷达图可视化技能。'
+  },
+  {
+    id: 3, name: 'Worker Pioneer', icon: '⚙️', level: 'Gold',
+    desc: '精通 Web Worker 多线程，将密集型计算任务从主线程剥离至独立 Worker，结合 Event Loop 宏任务调度，有效消除了长任务对 UI 交互的帧率阻塞，保障了海量数据场景下页面稳定 60fps 的丝滑响应。'
+  },
+  {
+    id: 4, name: 'Glass Architect', icon: '✨', level: 'Silver',
+    desc: '深刻理解玻璃拟物渲染，严格约束 transform 与 opacity 属性以建立 GPU 合成层，从底层规避大量重排与重绘。'
+  },
+  {
+    id: 5, name: 'Router Guardian', icon: '🔒', level: 'Bronze',
+    desc: '攻克 SPA 动态路由就地复用引发的状态污染漏洞，联动 Vue Router 全局守卫与 Pinia 缓存池进行强制状态重置，从路由级别斩断了跨页面切换时的数据碰撞隐患。'
+  },
+  {
+    id: 6, name: 'Grid Weaver', icon: '💎', level: 'Gold',
+    desc: '手写 CSS 瀑布流。'
+  }
 ])
 
 const growthTracks = ref([
@@ -714,11 +734,21 @@ const generateHeatmapViaWorker = () => {
   transform: scaleX(1);
 }
 
-/* 勋章墙 */
+/* 勋章墙 - 纯 CSS 瀑布流
+ * 原理：column-count 将容器切成 N 条竖向泳道，卡片从上到下依次填充最短的列
+ * 优势：布局计算完全在浏览器渲染引擎内完成，零 JS 介入，彻底规避重排重绘
+ * 与 Grid 区别：Grid 强制对齐行高（整齐），columns 允许每列独立伸缩（错落有致）
+ */
 .honors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  column-count: 3;
+  column-gap: 20px;
+}
+
+@media (max-width: 860px) {
+  .honors-grid { column-count: 2; }
+}
+@media (max-width: 520px) {
+  .honors-grid { column-count: 1; }
 }
 
 .honor-card {
@@ -728,10 +758,12 @@ const generateHeatmapViaWorker = () => {
   border: 1px solid var(--color-border-default);
   border-radius: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;      /* 顶对齐：高度由内容自然撑开，是瀑布流错落感的来源 */
   gap: 20px;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
   overflow: hidden;
+  break-inside: avoid;          /* 核心：禁止卡片在分列处被截断成两半 */
+  margin-bottom: 20px;          /* column-count 不支持 row-gap，用 margin 代替 */
 }
 
 .honor-card:hover {
