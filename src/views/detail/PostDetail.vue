@@ -1,45 +1,155 @@
 <script setup>
-import { computed, ref, watch, onUnmounted } from 'vue'
+import { computed, reactive, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useDetailStore } from '@/stores/detail'
 
 const router = useRouter()
 const route = useRoute()
 
-// ============== 接入 Pinia 状态机 ==============
-// 所有数据状态统一由 DetailStore 管理，组件只负责 UI 渲染和 DOM 操作
-const detailStore = useDetailStore()
-const {
-  detailData,
-  isFavorite,
-  applyStatus,
-  showApplyModal,
-  advantageText,
-  errorMessage
-} = storeToRefs(detailStore)
-
-// ============== 路由参数监听 → 触发 Store 数据加载 ==============
-// 核心：当路由参数变化时（含组件就地复用场景），自动加载对应模块的数据
-// immediate: true 保证首次进入也会触发加载
-watch(
-  () => ({ type: route.params.type, id: route.params.id }),
-  ({ type, id }) => {
-    if (type && id) {
-      detailStore.loadByModuleId(type, id)
-    }
-  },
-  { immediate: true }
-)
+// 获取路由中的 ID 和 类型
+const postId = computed(() => route.params.id)
+const postType = computed(() => route.params.type)
 
 // 返回上一页
 const goBack = () => {
   router.back()
 }
 
-// ============== 目录与内容解析（纯 UI 派生，保留在组件内） ==============
+// ============== 模拟数据 ==============
+const mockDb = reactive({
+  'recruit_1': {
+    type: 'recruit',
+    title: '蓝桥杯 Web 应用开发国赛组队，缺一后端！',
+    author: '前端小牛',
+    avatar: '/avatar.jpg',
+    updatedTime: '2 小时前',
+    status: '招募中',
+    isFavorite: false,
+    content: `
+      <p>目前我们队伍有一个前端和一个UI，准备报名今年的蓝桥杯Web赛道。前端技术栈是Vue3+Pinia，UI用Figma。</p>
+      <h3>我们需要的队友</h3>
+      <p>现在急需一名熟悉 Node.js 或者 Java SpringBoot 的后端大佬加入。</p>
+      <h3>时间与要求</h3>
+      <p>比赛期间一周最好能抽出10小时一起交流，如果有微服务经验或者搞过大屏可视化优先。</p>
+    `,
+    tags: ['Web开发', '蓝桥杯', '寻找后端'],
+    views: 1256,
+    commentCount: 8
+  },
+  'share_1': {
+    type: 'share',
+    title: '计算机设计大赛国一经验贴：如何写好一份漂亮的答辩PPT？',
+    author: '架构师老张',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=老张',
+    updatedTime: '5 小时前',
+    isFavorite: false,
+    content: `
+      <p>很多人代码写得好，但是在计设答辩环节吃了大亏。答辩只有不到10分钟，评委根本没时间看你的每一行代码。</p>
+      <h3>核心要素</h3>
+      <p>你需要在一开始就抛出项目解决的市场痛点、商业价值，然后用架构图展示技术难点。本文分享了我们队伍去年拿国一使用的PPT模板与演讲逐字稿。</p>
+    `,
+    tags: ['答辩技巧', 'PPT模板', '干货分享'],
+    views: 1205,
+    commentCount: 120
+  },
+  'share_2': {
+    type: 'share',
+    title: 'Vue3 性能调优指南：从 500ms 到 50ms 的极致首屏加载',
+    author: '前端架构师阿飞',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=阿飞',
+    updatedTime: '昨天 19:20',
+    isFavorite: true,
+    content: `
+      <p>在这篇文章中，我们将深入探讨 Vue3 渲染引擎背后的机制，了解什么是 Block Tree 以及如何利用 keep-alive 和异步组件切割代码体积。</p>
+      <h3>性能瓶颈排查</h3>
+      <p>我将结合大厂的真实落地案例，一步步带你排查性能瓶颈。附送自动化检测脚本。</p>
+    `,
+    tags: ['Vue3', '性能优化', '前端架构'],
+    views: 342,
+    commentCount: 42
+  },
+  'share_5': {
+    type: 'share',
+    title: '国赛备战必备：美赛/国赛历年优秀论文核心排版格式与工具推荐',
+    author: '数学建模大佬',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=建模',
+    updatedTime: '3 天前',
+    isFavorite: true,
+    content: `
+      <p>数学建模比赛，排版占了印象分的很大比重。还在用 Word 痛苦地对齐公式？强烈推荐队伍里的排版手学习 LaTeX（Overleaf）。</p>
+      <h3>资源推荐</h3>
+      <p>我打包了 3 套我们拿过美赛 M 奖和国赛一等奖的现成 LaTeX 模板，直接填内容就能出神作。</p>
+    `,
+    tags: ['LaTeX', '排版工具', '历年真题'],
+    views: 2310,
+    commentCount: 456
+  },
+  'recruit_2': {
+    type: 'recruit',
+    title: '大创国家级立项，做校园闲置物品流转系统，求移动端开发人员',
+    author: '极客实验室',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=极客',
+    updatedTime: '昨天 14:30',
+    status: '招募中',
+    isFavorite: true,
+    content: `
+      <p>我们的大创项目已经成功拿到国家级立项，目前预算充足。系统主要做校园内的二手闲置流转，结合智能推荐算法。后端基础搭建已完成。</p>
+      <h3>招募方向：大前端</h3>
+      <p>现求一两名熟悉 Uni-app 或 鸿蒙系统开发的同学，一起将系统落地。</p>
+    `,
+    tags: ['大创', '资金充裕', 'APP开发'],
+    views: 342,
+    commentCount: 23
+  },
+  'recruit_3': {
+    type: 'recruit',
+    title: 'Kaggle 数据挖掘竞赛：信用卡欺诈检测，求求带带！',
+    author: '算法练习生',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=算法',
+    updatedTime: '昨天 09:15',
+    status: '招募中',
+    isFavorite: true,
+    content: `
+      <p>本人目前大三，熟悉基础的机器学习算法（XGBoost, Random Forest），想找几个小伙伴一起打这周末结束的 Kaggle 新手赛。</p>
+      <h3>我们的目标</h3>
+      <p>不求拿到名次，但求完整走一遍特征工程、模型搭建和调参的流程。如果你对数据敏感，欢迎加入！</p>
+    `,
+    tags: ['Python', 'Pandas', 'Sklearn'],
+    views: 890,
+    commentCount: 12
+  },
+  'recruit_5': {
+    type: 'recruit',
+    title: '想做一个极致优雅的番茄钟 App，我已经画好了图，就差程序员了',
+    author: '野生设计师',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=设计',
+    updatedTime: '3 天前',
+    status: '已满员',
+    isFavorite: false,
+    content: `
+      <p>发现市面上的番茄钟都太丑了，或者广告太多。我自己用 Figma 构思了一套玻璃拟物化风格（Glassmorphism）的 UI 界面。</p>
+      <h3>项目现状</h3>
+      <p>目前 UI 设计已全部完成，导出图稿已就绪。正在寻找 iOS 独立开发的老哥合作共同打造一款出圈的产品。</p>
+    `,
+    tags: ['SwiftUI', 'Figma', '独立开发'],
+    views: 108,
+    commentCount: 15
+  }
+})
+
+const detailData = computed(() => {
+  const key = `${postType.value}_${postId.value}`
+  return mockDb[key] || { 
+    title: '未找到内容', 
+    content: '<p>这篇帖子已经被吸入赛博黑洞...</p>', 
+    author: 'System', 
+    updatedTime: '未知', 
+    type: 'unknown',
+    tags: []
+  }
+})
+
+// ============== 动态提取目录 (TOC) 与内容解析 ==============
 const parsedContent = computed(() => {
-  if (!detailData.value) return ''
   let html = detailData.value.content || ''
   return html.replace(/<h3[^>]*>(.*?)<\/h3>/g, (match, p1) => {
     const id = p1.replace(/<[^>]+>/g, '').trim()
@@ -48,7 +158,6 @@ const parsedContent = computed(() => {
 })
 
 const tocLinks = computed(() => {
-  if (!detailData.value) return []
   const links = []
   const html = detailData.value.content || ''
   const regex = /<h3[^>]*>(.*?)<\/h3>/g
@@ -67,18 +176,26 @@ const scrollToAnchor = (id) => {
   }
 }
 
-// ============== 收藏动效（纯 UI 动画状态，保留在组件内） ==============
+// ============== 交互逻辑 ==============
 const isLikedAnim = ref(false)
 
-const handleToggleFavorite = () => {
-  detailStore.toggleFavorite()
-  if (isFavorite.value) {
-    isLikedAnim.value = true
-    setTimeout(() => { isLikedAnim.value = false }, 800)
+const toggleFavorite = () => {
+  if(detailData.value.type !== 'unknown') {
+    detailData.value.isFavorite = !detailData.value.isFavorite
+    if (detailData.value.isFavorite) {
+      isLikedAnim.value = true
+      setTimeout(() => { isLikedAnim.value = false }, 800)
+    }
   }
 }
 
-// ============== 弹窗 DOM 控制（纯 DOM 操作，保留在组件内） ==============
+// ============== 申请弹窗逻辑 ==============
+const showApplyModal = ref(false)
+const advantageText = ref('')
+const errorMessage = ref('')
+const applyStatus = ref('none')
+
+// 防止弹窗出现时滚动穿透
 const preventScroll = (e) => e.preventDefault()
 const lockBodyScroll = () => {
   document.body.style.overflow = 'hidden'
@@ -89,33 +206,45 @@ const unlockBodyScroll = () => {
   document.removeEventListener('touchmove', preventScroll)
 }
 
+onMounted(() => {
+  const savedStatus = localStorage.getItem(`apply_status_post_${postType.value}_${postId.value}`)
+  if (savedStatus) {
+    applyStatus.value = savedStatus
+  }
+})
+
 onUnmounted(() => {
   unlockBodyScroll()
 })
 
-const handleOpenApplyModal = () => {
-  detailStore.openApply()
-  if (showApplyModal.value) {
-    lockBodyScroll()
-  }
+const openApplyModal = () => {
+  if (applyStatus.value !== 'none') return
+  advantageText.value = ''
+  errorMessage.value = ''
+  showApplyModal.value = true
+  lockBodyScroll()
 }
 
-const handleCloseApplyModal = () => {
-  detailStore.closeApply()
+const closeApplyModal = () => {
+  showApplyModal.value = false
   unlockBodyScroll()
 }
 
-const handleSubmitApplication = () => {
-  if (detailStore.submitApplication()) {
-    handleCloseApplyModal()
+const submitApplication = () => {
+  if (advantageText.value.trim().length < 5) {
+    errorMessage.value = '请至少输入5个字来描述你的优势'
+    return
   }
+  applyStatus.value = 'reviewing'
+  localStorage.setItem(`apply_status_post_${postType.value}_${postId.value}`, 'reviewing')
+  closeApplyModal()
 }
 </script>
 
 <template>
   <div class="page-background">
     <!-- 核心排版：左侧正文，右侧悬浮卡片 -->
-    <div class="layout-wrapper" v-if="detailData">
+    <div class="layout-wrapper">
       <main class="main-content">
         <article class="article-box">
           <!-- 内部导航区：返回大厅与收藏 -->
@@ -126,12 +255,12 @@ const handleSubmitApplication = () => {
             </button>
             <button 
               class="action-btn" 
-              :class="{ 'is-favorite': isFavorite, 'anim-pop': isLikedAnim }" 
-              @click="handleToggleFavorite"
+              :class="{ 'is-favorite': detailData.isFavorite, 'anim-pop': isLikedAnim }" 
+              @click="toggleFavorite"
             >
-              <svg v-if="isFavorite" class="btn-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              <svg v-if="detailData.isFavorite" class="btn-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
               <svg v-else class="btn-icon" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
-              <span class="text-hide-mobile">{{ isFavorite ? '已收藏' : '收藏' }}</span>
+              <span class="text-hide-mobile">{{ detailData.isFavorite ? '已收藏' : '收藏' }}</span>
             </button>
           </div>
 
@@ -185,7 +314,7 @@ const handleSubmitApplication = () => {
              <button 
                 class="gh-btn-primary full-width huge-btn" 
                 :class="{'btn-disabled': applyStatus !== 'none' || detailData.status === '已满员'}"
-                @click="handleOpenApplyModal"
+                @click="openApplyModal"
                 :disabled="applyStatus !== 'none' || detailData.status === '已满员'"
               >
                 {{ detailData.status === '已满员' ? '人员已满' : (applyStatus === 'none' ? '立刻申请入队' : applyStatus === 'reviewing' ? '等待对方回复...' : '组队成功') }}
@@ -208,9 +337,9 @@ const handleSubmitApplication = () => {
     <!-- 全屏高斯模态弹窗 -->
     <Teleport to="body">
       <Transition name="modal-fade">
-        <div v-if="showApplyModal" class="modal-overlay" @click.self="handleCloseApplyModal">
+        <div v-if="showApplyModal" class="modal-overlay" @click.self="closeApplyModal">
           <div class="modern-modal">
-            <button class="close-btn" @click="handleCloseApplyModal">
+            <button class="close-btn" @click="closeApplyModal">
               <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             </button>
             
@@ -229,8 +358,8 @@ const handleSubmitApplication = () => {
             </div>
 
             <div class="modal-actions-right">
-              <button class="gh-btn-subtle" @click="handleCloseApplyModal">稍后再说</button>
-              <button class="gh-btn-primary shadow-btn" @click="handleSubmitApplication">
+              <button class="gh-btn-subtle" @click="closeApplyModal">稍后再说</button>
+              <button class="gh-btn-primary shadow-btn" @click="submitApplication">
                 发送申请信
                 <svg viewBox="0 0 24 24" width="16" height="16" style="margin-left: 6px;"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               </button>
