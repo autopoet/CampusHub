@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "type": "recruit",
+    "author": "前端小牛",
+    "action": "发起组队招募",
+    "title": "蓝桥杯 Web 应用开发国赛组队，缺一后端！",
+    "excerpt": "目前我们队伍有一个前端和一个UI，准备报名今年的蓝桥杯Web赛道。前端技术栈是Vue3+Pinia，UI用Figma。现在急需一名熟悉 Node.js 或者 Java SpringBoot 的后端大佬加入。比赛期间一周最好能抽出10小时一起交流。",
+    "competition": "蓝桥杯",
+    "requiredSkills": ["Node.js", "Java", "MySQL"],
+    "status": "招募中",
+    "updatedTime": "2 小时前",
+    "isFavorite": false,
+    "commentCount": 8,
+    "type_id": "recruit"
+  },
+  {
+    "id": 2,
+    "type": "recruit",
+    "author": "校内实验室",
+    "action": "发布了寻人启事",
+    "title": "大创国家级立项，做校园闲置物品流转系统，求移动端开发人员",
+    "excerpt": "我们的大创项目已经成功拿到国家级立项，目前预算充足。系统主要做校园内的二手闲置流转，结合智能推荐算法。后端基础搭建已完成。现求一两名熟悉 Uni-app 或 鸿蒙系统开发的同学，一起将系统落地。有奖励！",
+    "competition": "大创 / 挑战杯",
+    "requiredSkills": ["Uni-app", "鸿蒙开发"],
+    "status": "招募中",
+    "updatedTime": "昨天 14:30",
+    "isFavorite": false,
+    "commentCount": 23,
+    "type_id": "recruit"
+  }
+]
