@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "post_id": 101,
+    "author_id": 2,
+    "content": "很棒的文章，受益匪浅！",
+    "created_at": "2023-03-02T09:15:00Z",
+    "likes": 3,
+    "type_id": "comments"
+  },
+  {
+    "id": 2,
+    "post_id": 102,
+    "author_id": 1,
+    "content": "谢谢分享，报名成功！",
+    "created_at": "2023-04-16T11:30:00Z",
+    "likes": 1,
+    "type_id": "comments"
+  }
+]

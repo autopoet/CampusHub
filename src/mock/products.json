@@ -1,0 +1,20 @@
+[
+  {
+    "id": 101,
+    "title": "Vue 3 Handbook",
+    "price": 39.99,
+    "image_url": "https://via.placeholder.com/150",
+    "stock": 100,
+    "type_id": "products",
+    "created_at": "2023-05-01T08:00:00Z"
+  },
+  {
+    "id": 102,
+    "title": "CampusHub T-Shirt",
+    "price": 19.5,
+    "image_url": "https://via.placeholder.com/150",
+    "stock": 50,
+    "type_id": "products",
+    "created_at": "2023-05-10T10:30:00Z"
+  }
+]

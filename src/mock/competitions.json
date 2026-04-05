@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "全校编程大赛",
+    "description": "面向全校学生的编程挑战赛，提供丰富奖品。",
+    "start_date": "2023-09-01",
+    "end_date": "2023-09-30",
+    "status": "upcoming",
+    "participants_count": 0,
+    "type_id": "competitions"
+  },
+  {
+    "id": 2,
+    "title": "AI 创意挑战赛",
+    "description": "利用 AI 技术完成创意项目的比赛。",
+    "start_date": "2023-10-10",
+    "end_date": "2023-11-10",
+    "status": "upcoming",
+    "participants_count": 0,
+    "type_id": "competitions"
+  }
+]
