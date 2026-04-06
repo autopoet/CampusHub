@@ -127,6 +127,7 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
       class="icon-wrapper popover-trigger" 
       @mouseenter="showNoticePanel = true" 
       @mouseleave="showNoticePanel = false"
+      @click="handleNav('/home/notifications')"
     >
       <div class="icon-box">
         <el-icon class="info-icon"><ChatDotRound /></el-icon>
@@ -149,7 +150,7 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
               </div>
             </div>
           </div>
-          <div class="panel-footer">查看所有通知</div>
+          <div class="panel-footer" @click.stop="handleNav('/home/notifications')">查看所有通知</div>
         </div>
       </transition>
     </div>
@@ -159,6 +160,7 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
       class="icon-wrapper popover-trigger"
       @mouseenter="showTeamPanel = true" 
       @mouseleave="showTeamPanel = false"
+      @click="handleNav('/home/teams')"
     >
       <div class="icon-box">
         <el-icon class="info-icon"><Message /></el-icon>
@@ -170,7 +172,7 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
         <div class="rich-dropdown-panel team-panel" v-show="showTeamPanel">
           <div class="panel-header">
             <span class="panel-title">我的队伍</span>
-            <span class="panel-action" @click="router.push('/home/index/recruit')">寻找新队伍</span>
+            <span class="panel-action" @click.stop="router.push('/home/index/recruit')">寻找新队伍</span>
           </div>
           <div class="panel-body">
             <div v-for="team in myTeamsList" :key="team.id" class="team-item">
@@ -184,7 +186,7 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
               </div>
             </div>
           </div>
-          <div class="panel-footer" @click="handleProfile">查看个人主页</div>
+          <div class="panel-footer" @click.stop="handleNav('/home/teams')">查看队伍详情</div>
         </div>
       </transition>
     </div>
@@ -242,16 +244,28 @@ const handleMouseLeave = () => { if (!props.isMobile) showDropdown.value = false
 .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; font-size: 14px; font-weight: 500; border-radius: 8px; transition: background 0.2s; }
 .dropdown-item:hover { background: var(--color-canvas-subtle); }
 
-.rich-dropdown-panel { position: absolute; top: 50px; right: -50px; width: 320px; background: var(--color-canvas-default); border: 1px solid var(--color-border-default); border-radius: 16px; box-shadow: 0 12px 32px rgba(0,0,0,0.15); z-index: 2000; overflow: hidden; }
+.rich-dropdown-panel { position: absolute; top: 50px; right: 0; width: 320px; background: var(--color-canvas-default); border: 1px solid var(--color-border-default); border-radius: 16px; box-shadow: 0 12px 32px rgba(0,0,0,0.15); z-index: 2000; overflow: hidden; }
 .panel-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--color-canvas-subtle); border-bottom: 1px solid var(--color-border-muted); }
 .panel-title { font-size: 14px; font-weight: 700; }
 .panel-action { font-size: 12px; color: var(--color-accent-fg); cursor: pointer; }
 .panel-body { max-height: 300px; overflow-y: auto; padding: 8px 0; }
 .panel-footer { padding: 12px; text-align: center; font-size: 13px; font-weight: 700; color: var(--color-fg-muted); border-top: 1px solid var(--color-border-muted); cursor: pointer; }
-.notice-item { display: flex; gap: 12px; padding: 12px 16px; transition: 0.2s; cursor: pointer; }
+.notice-item { display: flex; gap: 12px; padding: 12px 16px; transition: 0.2s; cursor: pointer; border-bottom: 1px solid var(--color-border-subtle); }
+.notice-item:last-child { border-bottom: none; }
 .notice-item:hover { background: var(--color-canvas-subtle); }
 .is-unread { background: var(--color-accent-subtle); }
 .notice-icon { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent-fg); margin-top: 6px; flex-shrink: 0; }
+
+.team-item { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; transition: 0.2s; cursor: pointer; border-bottom: 1px solid var(--color-border-subtle); }
+.team-item:last-child { border-bottom: none; }
+.team-item:hover { background: var(--color-canvas-subtle); }
+.team-info-top, .team-info-bottom { display: flex; justify-content: space-between; align-items: center; }
+.team-name { font-size: 14px; font-weight: 700; color: var(--color-fg-default); }
+.team-status { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; }
+.status-green { background: rgba(45, 164, 78, 0.1); color: #2da44e; border: 1px solid rgba(45, 164, 78, 0.2); }
+.status-blue { background: rgba(9, 105, 218, 0.1); color: var(--color-accent-fg); border: 1px solid rgba(9, 105, 218, 0.2); }
+.team-role { font-size: 12px; color: var(--color-fg-muted); }
+.team-members { font-size: 11px; color: var(--color-fg-subtle); font-family: 'Fira Code', monospace; }
 
 /* ============================
    移动端视图样式

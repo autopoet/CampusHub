@@ -55,6 +55,16 @@ const router = createRouter({
           path: 'favorites', // 我的收藏夹
           name: 'favorites',
           component: () => import('../views/profile/FavoritesList.vue'),
+        },
+        {
+          path: 'notifications', // 通知中心
+          name: 'notifications',
+          component: () => import('../views/home/NotificationsView.vue'),
+        },
+        {
+          path: 'teams', // 我的队伍
+          name: 'teams',
+          component: () => import('../views/home/MyTeamsView.vue'),
         }
       ]
     },

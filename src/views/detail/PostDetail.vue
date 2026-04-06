@@ -36,19 +36,15 @@ const goBack = () => {
 onMounted(async () => {
   loading.value = true
   
-  // 1. 根据路由 type 加载对应详情 (修复 Bug: 使用 loadShareById)
-  let post = null;
-  if (postType.value === 'recruit') {
-    post = await store.loadRecruitmentById(postId.value);
-  } else {
-    post = await store.loadShareById(postId.value);
-  }
+  // 1. 根据路由 type 加载对应详情
+  const data = postType.value === 'recruit' 
+    ? await store.loadRecruitmentById(postId.value)
+    : await store.loadShareById(postId.value);
   
-  if (post) {
-    detailData.value = { ...post };
+  if (data) {
+    detailData.value = { ...data };
   } else {
     geekToast.error('未找到该内容');
-    // 如果没找到，2秒后返回上一页
     setTimeout(() => {
       if (route.name === 'detail') router.push('/home/index');
     }, 2000);
@@ -279,19 +275,25 @@ const submitApplication = () => {
 
           <!-- 招募操作区 -->
           <div class="sidebar-glass-card recruit-action-card" v-if="postType === 'recruit'">
-             <div class="card-title-sm">参与项目</div>
-             <p class="action-desc">对这个竞赛感兴趣？点击下方按钮向发起人展示你的优势并申请加入队伍。</p>
-             <button 
-                class="apply-prime-btn" 
-                :class="{'btn-loading': applyStatus !== 'none'}"
-                @click="openApplyModal"
-                :disabled="applyStatus !== 'none'"
-              >
-                <svg v-if="applyStatus === 'none'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:6px">
-                  <path d="M12 5v14M5 12h14"></path>
-                </svg>
-                <span>{{ applyStatus === 'none' ? '立刻申请入队' : '申请已提交 · 审核中' }}</span>
-              </button>
+             <div class="card-title-sm">参与项目 // JOIN_NOW</div>
+             <div class="recruit-action-body">
+                <p class="action-desc">对这个竞赛感兴趣？展示你的优势，立刻加入队伍开启协作！</p>
+                <div class="requirement-preview" v-if="detailData.tags">
+                   <span class="req-label">标签关注：</span>
+                   <span class="req-tag" v-for="t in detailData.tags.slice(0,2)" :key="t">{{t}}</span>
+                </div>
+                <button 
+                  class="apply-prime-btn" 
+                  :class="{'btn-loading': applyStatus !== 'none'}"
+                  @click="openApplyModal"
+                  :disabled="applyStatus !== 'none'"
+                >
+                  <svg v-if="applyStatus === 'none'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:8px">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                  <span>{{ applyStatus === 'none' ? '立刻申请入队' : '申请已提交 · 审核中' }}</span>
+                </button>
+             </div>
           </div>
 
           <!-- 文章目录 -->
@@ -500,9 +502,17 @@ const submitApplication = () => {
 .follow-btn { width: 100%; padding: 12px; border-radius: 12px; border: none; background: var(--color-fg-default); color: var(--color-canvas-default); font-weight: 700; cursor: pointer; transition: transform 0.2s; }
 .follow-btn:hover { transform: scale(1.02); }
 
-.apply-prime-btn { width: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; border-radius: 14px; border: none; background: var(--color-accent-fg); color: #fff; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 8px 20px rgba(9, 105, 218, 0.3); transition: all 0.3s; }
-.apply-prime-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(9, 105, 218, 0.4); }
-.apply-prime-btn:disabled { opacity: 0.7; cursor: not-allowed; background: #94a3b8; }
+/* 招募操作区增强 */
+.recruit-action-card { background: linear-gradient(135deg, var(--color-canvas-default), var(--color-canvas-subtle)); border: 1px solid var(--color-accent-fg); box-shadow: 0 12px 40px -10px rgba(9, 105, 218, 0.15); }
+.recruit-action-body { display: flex; flex-direction: column; gap: 16px; }
+.action-desc { font-size: 14px; color: var(--color-fg-muted); line-height: 1.6; margin: 0; }
+.requirement-preview { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.req-label { color: var(--color-fg-subtle); }
+.req-tag { color: var(--color-accent-fg); font-weight: 700; }
+
+.apply-prime-btn { width: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; border-radius: 14px; border: none; background: var(--color-accent-fg); color: #fff; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 8px 24px rgba(9, 105, 218, 0.3); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.apply-prime-btn:hover:not(:disabled) { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(9, 105, 218, 0.4); filter: brightness(1.1); }
+.apply-prime-btn:disabled { opacity: 0.7; cursor: not-allowed; background: #94a3b8; box-shadow: none; border: 1px solid var(--color-border-default); color: rgba(255,255,255,0.8); }
 
 .toc-nav-item { display: flex; gap: 12px; padding: 12px; border-radius: 10px; cursor: pointer; transition: 0.2s; align-items: center; }
 .toc-nav-item:hover { background: var(--color-canvas-subtle); }
