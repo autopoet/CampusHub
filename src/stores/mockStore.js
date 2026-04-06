@@ -76,7 +76,8 @@ export const useMockStore = defineStore('mock', {
     async loadComments(postId) {
       // 这里的 logic 不再破坏全局 comments 状态，而是加载对应的帖子评论
       // 为了性能，如果切换帖子，我们通常重置 comments
-      return this._load('comments', 'comments', { filter: { post_id: Number(postId) } });
+      // 合并默认分页参数，避免 pageSize 为 undefined
+      return this._load('comments', 'comments', { page: 1, pageSize: 20, filter: { post_id: Number(postId) } });
     },
 
     async loadPostById(id) {
@@ -106,7 +107,8 @@ export const useMockStore = defineStore('mock', {
     },
 
     async loadNotifications(userId) {
-      return this._load('notifications', 'notifications', { filter: { user_id: Number(userId) } });
+      // 合并默认分页参数，避免 pageSize 为 undefined
+      return this._load('notifications', 'notifications', { page: 1, pageSize: 20, filter: { user_id: Number(userId) } });
     },
 
     loadCategories() { return this._load('categories', 'categories'); },
