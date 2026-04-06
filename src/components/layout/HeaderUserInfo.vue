@@ -3,14 +3,13 @@ defineOptions({
   name: 'HeaderUserInfo'
 })
 
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ChatDotRound, Message, Star, User, SwitchButton, Sunny, Moon } from '@element-plus/icons-vue'
+import { useMockStore } from '@/stores/mockStore'
 
 const router = useRouter()
-
-// 消息数量
-const messageCount = ref(3)
+const store = useMockStore()
 
 // 下拉菜单显示状态
 const showDropdown = ref(false)
@@ -18,13 +17,9 @@ const showNoticePanel = ref(false)
 const showTeamPanel = ref(false)
 
 // 模拟的拉取数据
-const notifications = ref([
-  { id: 5, type: 'system', content: '【重要】你的实名认证已通过，现在可以发布组队信息了', time: '刚才', read: false },
-  { id: 1, type: 'apply', content: '用户 [阿飞] 申请加入你的队伍《Web3 骇客马拉松》', time: '10分钟前', read: false },
-  { id: 2, type: 'system', content: '你的文章《Vue3 渲染原理解析》已被推荐至首页', time: '2小时前', read: false },
-  { id: 3, type: 'reply', content: '[小明] 回复了你的评论: "受教了，感谢大佬！"', time: '昨天 14:30', read: true },
-  { id: 4, type: 'apply', content: '你申请加入的《基于 AI 的代码审查工具》已被队长同意', time: '3天前', read: true }
-])
+// 使用 store 中的状态替代本地硬编码
+const notifications = computed(() => store.notifications)
+const messageCount = computed(() => store.notifications.filter(n => !n.read).length)
 
 const myTeamsList = ref([
   { id: 1, name: 'Web3 骇客马拉松', role: '队长', status: '招募中', members: 3 },
@@ -45,11 +40,16 @@ onMounted(() => {
   const savedTheme = localStorage.getItem('theme') || 'light'
   isDark.value = savedTheme === 'dark'
   document.documentElement.setAttribute('data-theme', savedTheme)
+  
+  // 核心：初始化加载当前用户的通知 (假设当前用户 ID 为 1)
+  store.loadNotifications(1)
 })
 
 // 处理退出登录
 const handleLogout = () => {
-  console.log('退出登录')
+  console.log('退出登录: 清理凭证')
+  localStorage.removeItem('campus_token') // 关键：移除 Token 避免重入
+  store.clearStore() // 清理 Pinia 状态防止数据残留
   router.push('/login')
 }
 

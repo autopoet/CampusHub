@@ -64,9 +64,10 @@ const router = createRouter({
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    const token = 'fake-jwt-token-for-test' 
+    // 真正从 localStorage 读取 Token
+    const token = localStorage.getItem('campus_token')
     if (!token) {
-      console.warn('🚧 路由守卫拦截：无 Token，访问受限')
+      console.warn('🚧 Access Denied: No Token found.')
       next({
         path: '/login',
         query: { redirect: to.fullPath } 

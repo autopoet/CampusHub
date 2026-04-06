@@ -17,8 +17,15 @@ const onSubmit = () => {
     alert('请填写学号和密码！')
     return
   }
-  console.log('登录成功')
+  // 模拟登录逻辑：存入本地 Token
+  localStorage.setItem('campus_token', 'fake-jwt-token-for-test')
+  console.log('Login success, redirecting...')
   router.push('/home/index/recruit')
+}
+
+// 支持回车登录
+const onKeydown = (e) => {
+  if (e.key === 'Enter') onSubmit()
 }
 
 const onRegister = () => {
@@ -66,7 +73,12 @@ const onRegister = () => {
               <div class="form-group">
                 <label>学号 / 手机 / 邮箱</label>
                 <div class="input-wrapper">
-                  <input v-model="form.name" type="text" placeholder="输入您的凭据" />
+                  <input 
+                    v-model="form.name" 
+                    type="text" 
+                    placeholder="输入您的凭据" 
+                    @keydown="onKeydown"
+                  />
                   <div class="input-focus-line"></div>
                 </div>
               </div>
@@ -76,7 +88,12 @@ const onRegister = () => {
                   <a href="#" class="forgot-link">找回密码</a>
                 </div>
                 <div class="input-wrapper">
-                  <input v-model="form.password" type="password" placeholder="输入安全密码" />
+                  <input 
+                    v-model="form.password" 
+                    type="password" 
+                    placeholder="输入安全密码" 
+                    @keydown="onKeydown"
+                  />
                   <div class="input-focus-line"></div>
                 </div>
               </div>

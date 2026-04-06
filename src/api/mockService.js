@@ -11,11 +11,17 @@ export async function fetchMockData(typeId, options = { page: 1, pageSize: 20, f
     const raw = await import(`../mock/${typeId}.json`);
     let list = raw.default || [];
 
-    // 逻辑增强：支持服务端过滤模拟 (例如 filter: { post_id: 101 })
+    // 逻辑增强：支持服务端过滤模拟
     if (options.filter) {
-      const filterKey = Object.keys(options.filter)[0];
-      const filterVal = options.filter[filterKey];
-      list = list.filter(item => item[filterKey] === filterVal);
+      if (typeof options.filter === 'function') {
+        // 支持传入过滤函数处理复杂逻辑 (如 OR 匹配)
+        list = list.filter(options.filter);
+      } else {
+        // 支持对象精确匹配
+        Object.entries(options.filter).forEach(([key, val]) => {
+          list = list.filter(item => item[key] === val);
+        });
+      }
     }
 
     const start = (options.page - 1) * options.pageSize;
@@ -46,12 +52,17 @@ export async function fetchMockData(typeId, options = { page: 1, pageSize: 20, f
 // 业务专用封装函数
 export function getUsers() { return fetchMockData('users'); }
 export function getPosts(page, pageSize) { return fetchMockData('posts', { page, pageSize }); }
-export function getComments(postId) { return fetchMockData('comments', { filter: { post_id: postId } }); }
+export function getComments(postId) { return fetchMockData('comments', { filter: { post_id: Number(postId) } }); }
 export function getCompetitions(page, pageSize) { return fetchMockData('competitions', { page, pageSize }); }
 export function getProducts(page, pageSize) { return fetchMockData('products', { page, pageSize }); }
 export function getRecruitments(page, pageSize) { return fetchMockData('recruit', { page, pageSize }); }
-export function getNotifications(userId) { return fetchMockData('notifications', { filter: { user_id: userId } }); }
-export function getMessages(userId) { return fetchMockData('messages', { filter: { user_id: userId } }); }
+export function getNotifications(userId) { return fetchMockData('notifications', { filter: { user_id: Number(userId) } }); }
+export function getMessages(userId) { 
+  // 复杂过滤：发送者或接收者是当前用户
+  return fetchMockData('messages', { 
+    filter: (m) => m.sender_id === Number(userId) || m.receiver_id === Number(userId) 
+  }); 
+}
 export function getCategories() { return fetchMockData('categories'); }
 export function getTags() { return fetchMockData('tags'); }
 export function getSettings() { return fetchMockData('settings'); }
