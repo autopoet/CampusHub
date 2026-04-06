@@ -76,7 +76,7 @@ onUnmounted(() => {
   position: sticky;
   top: 0;
   z-index: 1000;
-  height: 60px !important;
+  height: 64px !important;
   padding: 0 20px;
   box-shadow: 0 1px 0 var(--color-border-default),
               0 2px 20px -8px rgba(0, 0, 0, 0.06);

@@ -1,4 +1,4 @@
-﻿/* CampusHub - Global Stylesheet Entry Point */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 /* 1. Design Tokens */
 :root {
@@ -6,7 +6,8 @@
   --color-fg-muted: #656d76;
   --color-fg-subtle: #8c959f;
   --color-canvas-default: #ffffff;
-  --color-canvas-subtle: #e8ecf0;
+  --color-canvas-default-rgb: 255, 255, 255;
+  --color-canvas-subtle: #f6f8fa;
   --color-canvas-overlay: #ffffff;
   --color-border-default: #d0d7de;
   --color-border-muted: #d0d7de;
@@ -27,16 +28,17 @@
   --color-btn-bg: #f6f8fa;
   --color-btn-hover-bg: #f3f4f6;
   --color-shadow: rgba(140,149,159,0.2);
-  --header-bg: rgba(255,255,255,0.92);
+  --header-bg: rgba(255,255,255,0.85);
 }
 
 [data-theme='dark'] {
   --color-fg-default: #e6edf3;
   --color-fg-muted: #7d8590;
   --color-fg-subtle: #6e7681;
-  --color-canvas-default: #161b22;
-  --color-canvas-subtle: #0d1117;
-  --color-canvas-overlay: #1c2128;
+  --color-canvas-default: #0d1117;
+  --color-canvas-default-rgb: 13, 17, 23;
+  --color-canvas-subtle: #010409;
+  --color-canvas-overlay: #161b22;
   --color-border-default: #30363d;
   --color-border-muted: #21262d;
   --color-border-subtle: rgba(48,54,61,0.5);
@@ -56,7 +58,7 @@
   --color-btn-bg: #21262d;
   --color-btn-hover-bg: #30363d;
   --color-shadow: rgba(0,0,0,0.5);
-  --header-bg: rgba(13,17,23,0.92);
+  --header-bg: rgba(13,17,23,0.85);
 }
 
 /* 2. Reset */
@@ -66,17 +68,26 @@
   padding: 0;
 }
 
-html { font-size: 14px; }
+html { font-size: 15px; }
 
 body {
   min-height: 100vh;
   color: var(--color-fg-default);
   background-color: var(--color-canvas-subtle);
-  line-height: 1.5;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(var(--color-canvas-default-rgb), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border-default);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
 
 /* Override Element Plus reset */
@@ -91,15 +102,25 @@ body {
   width: 100%;
 }
 
-a { color: var(--color-accent-fg); text-decoration: none; }
-a:hover { text-decoration: underline; }
-button { font-family: inherit; cursor: pointer; }
-input, textarea { font-family: inherit; font-size: inherit; }
+a { color: var(--color-accent-fg); text-decoration: none; transition: color 0.2s; }
+a:hover { color: #0550ae; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
 ul, ol { list-style: none; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; display: block; border-radius: inherit; }
 
 .text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Animations */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.anim-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+

@@ -51,7 +51,7 @@ export async function fetchMockData(typeId, options = { page: 1, pageSize: 20, f
 
 // 业务专用封装函数
 export function getUsers() { return fetchMockData('users'); }
-export function getPosts(page, pageSize) { return fetchMockData('posts', { page, pageSize }); }
+export function getShares(page, pageSize) { return fetchMockData('shares', { page, pageSize }); }
 export function getComments(postId) { return fetchMockData('comments', { filter: { post_id: Number(postId) } }); }
 export function getCompetitions(page, pageSize) { return fetchMockData('competitions', { page, pageSize }); }
 export function getProducts(page, pageSize) { return fetchMockData('products', { page, pageSize }); }

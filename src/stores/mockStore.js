@@ -8,7 +8,7 @@ import { ErrorCodes } from '@/api/errorCodes';
 export const useMockStore = defineStore('mock', {
   state: () => ({
     users: [],
-    posts: [], // share 类型
+    shares: [], // share 类型（原 posts）
     comments: [],
     competitions: [],
     products: [],
@@ -21,7 +21,7 @@ export const useMockStore = defineStore('mock', {
 
     // 分页状态追踪
     pagination: {
-      posts: { page: 1, pageSize: 20, total: 0 },
+      shares: { page: 1, pageSize: 20, total: 0 },
       competitions: { page: 1, pageSize: 12, total: 0 },
       products: { page: 1, pageSize: 20, total: 0 },
       recruitments: { page: 1, pageSize: 8, total: 0 },
@@ -60,19 +60,19 @@ export const useMockStore = defineStore('mock', {
 
     // --- 业务加载方法 ---
     loadUsers() { return this._load('users', 'users'); },
-    loadPosts(page = 1, append = false) { return this._load('posts', 'posts', { page, pageSize: 20, append }); },
-    async loadComments(postId) { return this._load('comments', 'comments', { page: 1, pageSize: 50, filter: { post_id: Number(postId) } }); },
-    async loadPostById(id) { // 只在 posts 中查找
-      const post = this.posts.find(p => p.id === Number(id));
-      if (post) return post;
-      const resp = await fetchMockData('posts', { filter: { id: Number(id) } });
+    loadShares(page = 1, append = false) { return this._load('shares', 'shares', { page, pageSize: 20, append }); },
+    async loadShareById(id) {
+      const share = this.shares.find(p => p.id === Number(id));
+      if (share) return share;
+      const resp = await fetchMockData('shares', { filter: { id: Number(id) } });
       if (resp.code === ErrorCodes.SUCCESS) return resp.data[0] || null;
       return null;
     },
+    async loadComments(postId) { return this._load('comments', 'comments', { page: 1, pageSize: 50, filter: { post_id: Number(postId) } }); },
     loadCompetitions(page = 1, append = false) { return this._load('competitions', 'competitions', { page, pageSize: 12, append }); },
     loadProducts(page = 1, append = false) { return this._load('products', 'products', { page, pageSize: 20, append }); },
     loadRecruitments(page = 1, append = false) { return this._load('recruit', 'recruitments', { page, pageSize: 8, append }); },
-    async loadRecruitmentById(id) { // 在 recruitments 中查找
+    async loadRecruitmentById(id) {
       const rec = this.recruitments.find(r => r.id === Number(id));
       if (rec) return rec;
       const resp = await fetchMockData('recruit', { filter: { id: Number(id) } });
