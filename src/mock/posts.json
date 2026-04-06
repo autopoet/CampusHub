@@ -1,22 +1,34 @@
 [
   {
     "id": 101,
-    "title": "Vue 3 新手指南",
-    "content": "这是一篇关于 Vue 3 基础的文章...",
-    "author_id": 1,
-    "type_id": "posts",
+    "type": "share",
+    "author": "架构师老张",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=老张",
+    "action": "分享经验",
+    "title": "计算机设计大赛国一经验贴：如何写好一份漂亮的答辩PPT？",
+    "excerpt": "很多人代码写得好，但是在计设答辩环节吃了大亏。答辩只有不到10分钟，评委根本没时间看你的每一行代码。",
+    "content": "<p>很多人代码写得好，但是在计设答辩环节吃了大亏。答辩只有不到10分钟，评委根本没时间看你的每一行代码。</p><h3>核心要素</h3><p>你需要在一开始就抛出项目解决的市场痛点、商业价值，然后用架构图展示技术难点。本文分享了我们队伍去年拿国一使用的PPT模板与演讲逐字稿。</p>",
+    "tags": ["答辩技巧", "PPT模板", "干货分享"],
+    "views": 1256,
+    "likes": 42,
+    "commentCount": 120,
     "created_at": "2023-03-01T10:00:00Z",
-    "likes": 12,
-    "comments_count": 3
+    "type_id": "posts"
   },
   {
     "id": 102,
-    "title": "校园竞赛报名攻略",
-    "content": "如何快速报名校园竞赛...",
-    "author_id": 2,
-    "type_id": "posts",
+    "type": "share",
+    "author": "前端架构师阿飞",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=阿飞",
+    "action": "分享技术",
+    "title": "Vue3 性能调优指南：从 500ms 到 50ms 的极致首屏加载",
+    "excerpt": "在这篇文章中，我们将深入探讨 Vue3 渲染引擎背后的机制，了解什么是 Block Tree 以及如何利用 keep-alive 和异步组件切割代码体积。",
+    "content": "<p>在这篇文章中，我们将深入探讨 Vue3 渲染引擎背后的机制，了解什么是 Block Tree 以及如何利用 keep-alive 和异步组件切割代码体积。</p><h3>性能瓶颈排查</h3><p>我将结合大厂的真实落地案例，一步步带你排查性能瓶颈。附送自动化检测脚本。</p>",
+    "tags": ["Vue3", "性能优化", "渲染引擎"],
+    "views": 890,
+    "likes": 128,
+    "commentCount": 42,
     "created_at": "2023-04-15T14:20:00Z",
-    "likes": 8,
-    "comments_count": 1
+    "type_id": "posts"
   }
 ]
